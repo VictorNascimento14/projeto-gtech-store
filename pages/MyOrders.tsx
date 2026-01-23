@@ -1,15 +1,16 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Lock, Package, Truck, ChevronRight, X, MapPin, CheckCircle2, Circle, Building2, Home, AlertTriangle, Ban, Loader2, Clock, Navigation, PackageCheck, ExternalLink, ThumbsUp, Gift, Star, Send, MessageSquare } from 'lucide-react';
+import { Lock, Package, Truck, ChevronRight, ChevronLeft, X, MapPin, CheckCircle2, Circle, Building2, Home, AlertTriangle, Ban, Loader2, Clock, Navigation, PackageCheck, ExternalLink, ThumbsUp, Gift, Star, Send, MessageSquare, ArrowRight, Sparkles } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useProducts } from '../contexts/ProductContext';
 import { Order, CartItem } from '../types';
 
 const MyOrders: React.FC = () => {
   const { isLoggedIn, user } = useAuth();
-  const { orders, updateOrderStatus } = useProducts();
+  const { orders, updateOrderStatus, products } = useProducts();
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showTrackingModal, setShowTrackingModal] = useState(false);
@@ -318,6 +319,37 @@ const MyOrders: React.FC = () => {
     }
   };
 
+  // Funções para controle do carrossel
+  const scrollCarousel = (direction: 'left' | 'right') => {
+    if (carouselRef.current) {
+      const scrollAmount = 300;
+      carouselRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  // Obter produtos recomendados (excluindo os que já estão nos pedidos do usuário)
+  const getRecommendedProducts = () => {
+    const orderedProductIds = new Set(
+      userOrders.flatMap(order => order.items.map(item => item.productId))
+    );
+    
+    // Pegar produtos não comprados e embaralhar
+    const availableProducts = products.filter(p => !orderedProductIds.has(p.id));
+    
+    // Se não houver produtos não comprados, mostrar todos
+    const productsToShow = availableProducts.length > 0 ? availableProducts : products;
+    
+    // Embaralhar e retornar até 10 produtos
+    return [...productsToShow]
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 10);
+  };
+
+  const recommendedProducts = getRecommendedProducts();
+
   if (!isLoggedIn) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center p-4 text-center bg-[#F9F8FE] dark:bg-gray-950 transition-colors">
@@ -423,6 +455,97 @@ const MyOrders: React.FC = () => {
             </div>
           )}
         </div>
+
+        {/* Seção de Recomendações */}
+        {recommendedProducts.length > 0 && (
+          <div className="mt-12">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-800 dark:text-white">Recomendados para você</h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Produtos que você pode gostar</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                {/* Botões de navegação do carrossel */}
+                <button
+                  onClick={() => scrollCarousel('left')}
+                  className="w-10 h-10 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-full flex items-center justify-center border border-gray-200 dark:border-gray-700 transition-colors"
+                >
+                  <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                </button>
+                <button
+                  onClick={() => scrollCarousel('right')}
+                  className="w-10 h-10 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-full flex items-center justify-center border border-gray-200 dark:border-gray-700 transition-colors"
+                >
+                  <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                </button>
+              </div>
+            </div>
+
+            {/* Carrossel de Produtos */}
+            <div 
+              ref={carouselRef}
+              className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide scroll-smooth"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {recommendedProducts.map((product) => (
+                <Link
+                  key={product.id}
+                  to={`/produto/${product.id}`}
+                  className="flex-shrink-0 w-64 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all group"
+                >
+                  {/* Imagem */}
+                  <div className="relative h-48 bg-gray-50 dark:bg-gray-800 p-4">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                    />
+                    {product.discount && product.discount !== '0%' && (
+                      <span className="absolute top-3 left-3 bg-primary text-white text-xs font-bold px-2 py-1 rounded-full">
+                        {product.discount}
+                      </span>
+                    )}
+                  </div>
+                  
+                  {/* Info */}
+                  <div className="p-4">
+                    <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">{product.category}</p>
+                    <h3 className="font-semibold text-gray-800 dark:text-white mb-2 truncate group-hover:text-primary transition-colors">
+                      {product.name}
+                    </h3>
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg font-black text-primary">
+                        R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      </span>
+                      {product.originalPrice > product.price && (
+                        <span className="text-sm text-gray-400 line-through">
+                          R$ {product.originalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            {/* Botão Ver Mais */}
+            <div className="text-center mt-6">
+              <Link
+                to="/produtos"
+                className="inline-flex items-center gap-2 bg-primary hover:bg-primary-hover text-white font-semibold py-3 px-8 rounded-xl transition-colors shadow-lg shadow-primary/20"
+              >
+                Ver mais produtos
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Modal de Detalhes do Pedido */}
