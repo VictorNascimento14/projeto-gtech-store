@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Lock, Package, Truck, ChevronRight, X, MapPin, CheckCircle2, Circle, Building2, Home, AlertTriangle, Ban, Loader2, Clock, Navigation, PackageCheck, ExternalLink } from 'lucide-react';
+import { Lock, Package, Truck, ChevronRight, X, MapPin, CheckCircle2, Circle, Building2, Home, AlertTriangle, Ban, Loader2, Clock, Navigation, PackageCheck, ExternalLink, ThumbsUp, Gift } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useProducts } from '../contexts/ProductContext';
 import { Order } from '../types';
@@ -13,9 +13,12 @@ const MyOrders: React.FC = () => {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showTrackingModal, setShowTrackingModal] = useState(false);
+  const [showConfirmDeliveryModal, setShowConfirmDeliveryModal] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
   const [isCancelling, setIsCancelling] = useState(false);
   const [cancelSuccess, setCancelSuccess] = useState(false);
+  const [isConfirmingDelivery, setIsConfirmingDelivery] = useState(false);
+  const [deliveryConfirmed, setDeliveryConfirmed] = useState(false);
 
   const userOrders = orders.filter(order => order.customerId === user?.id);
 
@@ -173,6 +176,39 @@ const MyOrders: React.FC = () => {
     ];
 
     return history;
+  };
+
+  // Funções para o modal de confirmação de entrega
+  const handleOpenConfirmDeliveryModal = () => {
+    setShowConfirmDeliveryModal(true);
+    setDeliveryConfirmed(false);
+  };
+
+  const closeConfirmDeliveryModal = () => {
+    setShowConfirmDeliveryModal(false);
+    setDeliveryConfirmed(false);
+  };
+
+  const handleConfirmDelivery = async () => {
+    if (!selectedOrder) return;
+    
+    setIsConfirmingDelivery(true);
+    try {
+      await updateOrderStatus(selectedOrder.id, 'delivered');
+      setDeliveryConfirmed(true);
+      // Atualizar o pedido selecionado localmente
+      setSelectedOrder(prev => prev ? { ...prev, status: 'delivered' } : null);
+      
+      // Fechar modais após 2.5 segundos
+      setTimeout(() => {
+        closeConfirmDeliveryModal();
+        closeDetailsModal();
+      }, 2500);
+    } catch (error) {
+      console.error('Erro ao confirmar entrega:', error);
+    } finally {
+      setIsConfirmingDelivery(false);
+    }
   };
 
   const handleCancelOrder = async () => {
@@ -469,6 +505,17 @@ const MyOrders: React.FC = () => {
                       Rastrear Entrega
                     </button>
                   )}
+
+                  {/* Botão Confirmar Entrega */}
+                  {(selectedOrder.status === 'shipped' || selectedOrder.status === 'processing') && (
+                    <button
+                      onClick={handleOpenConfirmDeliveryModal}
+                      className="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-xl transition-colors"
+                    >
+                      <PackageCheck className="w-5 h-5" />
+                      Confirmar Recebimento
+                    </button>
+                  )}
                   
                   {/* Botão Cancelar */}
                   {selectedOrder.status !== 'delivered' && (
@@ -737,6 +784,114 @@ const MyOrders: React.FC = () => {
                 </>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Confirmação de Entrega */}
+      {showConfirmDeliveryModal && selectedOrder && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          {/* Overlay */}
+          <div 
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            onClick={!isConfirmingDelivery ? closeConfirmDeliveryModal : undefined}
+          />
+          
+          {/* Modal Content */}
+          <div className="relative bg-white dark:bg-gray-900 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
+            {deliveryConfirmed ? (
+              // Tela de sucesso
+              <div className="p-8 text-center">
+                <div className="relative">
+                  <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Gift className="w-10 h-10 text-green-500" />
+                  </div>
+                  <div className="absolute -top-2 -right-2 left-0 right-0 flex justify-center">
+                    <span className="text-4xl animate-bounce">🎉</span>
+                  </div>
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">Entrega Confirmada!</h3>
+                <p className="text-gray-500 dark:text-gray-400 mb-4">
+                  Obrigado por confirmar o recebimento do seu pedido. Esperamos que você aproveite sua compra!
+                </p>
+                <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-4 border border-green-200 dark:border-green-800">
+                  <p className="text-sm text-green-700 dark:text-green-400">
+                    💡 <strong>Dica:</strong> Avalie os produtos para ajudar outros compradores!
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Header com ilustração */}
+                <div className="bg-gradient-to-br from-green-500 to-green-600 p-6 text-center text-white">
+                  <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <PackageCheck className="w-8 h-8" />
+                  </div>
+                  <h3 className="text-xl font-bold">Confirmar Recebimento</h3>
+                  <p className="text-green-100 text-sm mt-1">Pedido #{selectedOrder.id}</p>
+                </div>
+
+                {/* Content */}
+                <div className="p-6 space-y-4">
+                  <p className="text-gray-600 dark:text-gray-400 text-center">
+                    Você está confirmando que recebeu o(s) produto(s) do pedido em perfeito estado.
+                  </p>
+
+                  {/* Produtos do pedido */}
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                    <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-3">Itens do Pedido</p>
+                    <div className="space-y-2 max-h-32 overflow-y-auto">
+                      {selectedOrder.items.map((item, idx) => (
+                        <div key={idx} className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-white dark:bg-gray-700 rounded-lg flex items-center justify-center p-1">
+                            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-800 dark:text-white truncate">{item.name}</p>
+                            <p className="text-xs text-gray-400">Qtd: {item.quantity}</p>
+                          </div>
+                          <CheckCircle2 className="w-5 h-5 text-green-500" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-3">
+                    <p className="text-xs text-yellow-700 dark:text-yellow-400 text-center">
+                      ⚠️ Após confirmar, você não poderá mais cancelar este pedido
+                    </p>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="p-6 border-t border-gray-100 dark:border-gray-800 flex gap-3">
+                  <button
+                    onClick={closeConfirmDeliveryModal}
+                    disabled={isConfirmingDelivery}
+                    className="flex-1 py-3 px-4 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
+                  >
+                    Voltar
+                  </button>
+                  <button
+                    onClick={handleConfirmDelivery}
+                    disabled={isConfirmingDelivery}
+                    className="flex-1 py-3 px-4 rounded-xl bg-green-500 hover:bg-green-600 text-white font-semibold transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {isConfirmingDelivery ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Confirmando...
+                      </>
+                    ) : (
+                      <>
+                        <ThumbsUp className="w-5 h-5" />
+                        Confirmar
+                      </>
+                    )}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
