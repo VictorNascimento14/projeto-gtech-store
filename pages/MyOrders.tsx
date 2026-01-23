@@ -1,38 +1,70 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Lock, Package, Truck, ChevronRight } from 'lucide-react';
+import { Lock, Package, Truck, ChevronRight, X, MapPin, CheckCircle2, Circle, Building2, Home } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useProducts } from '../contexts/ProductContext';
-
-const MOCK_ORDERS = [
-  {
-    id: "#849201",
-    date: "12/10/2023",
-    status: "Em trânsito",
-    statusColor: "bg-blue-500",
-    total: 249.90,
-    items: [
-      { name: "K-Swiss V8", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBAiKDAo_-meifwjMo62TERQRYtAZG_qFOzYpJLsh04psDqmyb8oo9brE8kHkZs6Qv54h0w2E9QP2u1VynEs_swtPa0cBZSwLELvo_mtyeU1bfjEIBD4kGERlb0D5UUZhfBaq67efkb6dUddS-3cw1v3yjUFg5i7Qh5YRejIWVKIafU3L5BG9N5k49tUIZprh6R3_W9VdXQyfH9iE8vaUQGE4PTKaKg4ntT8cOkSNWJMhRQ5ABMrnvjpxihYE3gII3FqgswPlTHBP4" }
-    ]
-  },
-  {
-    id: "#849155",
-    date: "10/10/2023",
-    status: "Processando",
-    statusColor: "bg-yellow-500",
-    total: 120.00,
-    items: [
-      { name: "Nike Variant", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDGa_Oovzx3d_-nzNXp7yPBAZ1jbIRMFxvwYrUEp9GPQ95Sqq3JjhoKvlBQ2jo4kYpNCRIa4Aoy7BK-uC3IU9kBRo8g-wVrObnnguw6DtNE8Hjcp0m8jjsVAkGNqgEyq7TNBRxxx1uYQkrV9KTTCib3UrVtGkpStPecZWvYRFI2pvm-7-QF67KhjfF-zWfC23GTXSbSACt_pMBM9kav1HgQyQnKvtE9MBeaBcc0ARCwvrAcKQNHc62AJqh_U4JsNIc2ItauB-l7dIo" }
-    ]
-  }
-];
+import { Order } from '../types';
 
 const MyOrders: React.FC = () => {
   const { isLoggedIn, user } = useAuth();
   const { orders } = useProducts();
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
 
   const userOrders = orders.filter(order => order.customerId === user?.id);
+
+  // Função para obter informações de rastreamento da entrega
+  const getDeliveryTrackingInfo = (order: Order) => {
+    const statusProgress: Record<Order['status'], number> = {
+      'pending': 0,
+      'processing': 1,
+      'shipped': 2,
+      'delivered': 3,
+      'cancelled': -1
+    };
+
+    const currentProgress = statusProgress[order.status];
+
+    const trackingSteps = [
+      {
+        id: 1,
+        title: 'Centro de Distribuição',
+        address: 'Av. Industrial, 1500 - Guarulhos, SP - CEP: 07220-000',
+        status: currentProgress >= 0 ? 'completed' : 'pending',
+        date: currentProgress >= 0 ? new Date(order.createdAt).toLocaleDateString('pt-BR') : null,
+        icon: Building2
+      },
+      {
+        id: 2,
+        title: 'Em Trânsito - Filial Regional',
+        address: 'Rod. Presidente Dutra, Km 225 - São José dos Campos, SP - CEP: 12240-420',
+        status: currentProgress >= 2 ? 'completed' : currentProgress === 1 ? 'current' : 'pending',
+        date: currentProgress >= 1 ? new Date(new Date(order.createdAt).getTime() + 86400000).toLocaleDateString('pt-BR') : null,
+        icon: Truck
+      },
+      {
+        id: 3,
+        title: 'Destino Final',
+        address: order.shippingAddress || 'Endereço não informado',
+        status: currentProgress >= 3 ? 'completed' : currentProgress === 2 ? 'current' : 'pending',
+        date: currentProgress >= 3 ? new Date(new Date(order.createdAt).getTime() + 172800000).toLocaleDateString('pt-BR') : 'Previsão: ' + new Date(new Date(order.createdAt).getTime() + 259200000).toLocaleDateString('pt-BR'),
+        icon: Home
+      }
+    ];
+
+    return trackingSteps;
+  };
+
+  const handleViewDetails = (order: Order) => {
+    setSelectedOrder(order);
+    setShowDetailsModal(true);
+  };
+
+  const closeDetailsModal = () => {
+    setShowDetailsModal(false);
+    setSelectedOrder(null);
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -134,7 +166,12 @@ const MyOrders: React.FC = () => {
                     <div className="text-sm font-bold text-gray-700 dark:text-gray-200">
                       {order.items.length} {order.items.length === 1 ? 'Produto' : 'Produtos'}
                     </div>
-                    <button className="text-xs text-primary font-bold hover:underline flex items-center gap-1">Ver detalhes <ChevronRight className="w-3 h-3" /></button>
+                    <button 
+                      onClick={() => handleViewDetails(order)}
+                      className="text-xs text-primary font-bold hover:underline flex items-center gap-1"
+                    >
+                      Ver detalhes <ChevronRight className="w-3 h-3" />
+                    </button>
                   </div>
                 </div>
                 <button className="hidden sm:flex items-center gap-2 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 px-6 py-2 rounded-xl text-sm font-bold text-gray-600 dark:text-gray-300 transition-colors border border-gray-200 dark:border-gray-700">
@@ -154,6 +191,137 @@ const MyOrders: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Modal de Detalhes do Pedido */}
+      {showDetailsModal && selectedOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Overlay */}
+          <div 
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={closeDetailsModal}
+          />
+          
+          {/* Modal Content */}
+          <div className="relative bg-white dark:bg-gray-900 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+            {/* Header */}
+            <div className="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 p-6 flex items-center justify-between z-10">
+              <div>
+                <h2 className="text-xl font-bold text-gray-800 dark:text-white">Detalhes do Pedido #{selectedOrder.id}</h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Realizado em {new Date(selectedOrder.createdAt).toLocaleDateString('pt-BR')}
+                </p>
+              </div>
+              <button 
+                onClick={closeDetailsModal}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 space-y-6">
+              {/* Produtos do Pedido */}
+              <div>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Produtos</h3>
+                <div className="space-y-3">
+                  {selectedOrder.items.map((item, idx) => (
+                    <div key={idx} className="flex items-center gap-4 bg-gray-50 dark:bg-gray-800 p-3 rounded-xl">
+                      <div className="w-16 h-16 bg-white dark:bg-gray-700 rounded-lg flex items-center justify-center p-2">
+                        <img src={item.image} alt={item.name} className="w-full h-full object-cover object-center" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-800 dark:text-white">{item.name}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          {item.size && `Tamanho: ${item.size}`} {item.color && `• Cor: ${item.color}`}
+                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Qtd: {item.quantity}</p>
+                      </div>
+                      <p className="font-bold text-primary">R$ {item.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Status e Rastreamento */}
+              <div>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <MapPin className="w-4 h-4" />
+                  Rastreamento da Entrega
+                </h3>
+                
+                {selectedOrder.status === 'cancelled' ? (
+                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 text-center">
+                    <p className="text-red-600 dark:text-red-400 font-medium">Este pedido foi cancelado</p>
+                  </div>
+                ) : (
+                  <div className="relative">
+                    {getDeliveryTrackingInfo(selectedOrder).map((step, index, arr) => (
+                      <div key={step.id} className="flex gap-4 mb-6 last:mb-0">
+                        {/* Timeline Line and Icon */}
+                        <div className="flex flex-col items-center">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                            step.status === 'completed' 
+                              ? 'bg-green-500 text-white' 
+                              : step.status === 'current'
+                              ? 'bg-primary text-white animate-pulse'
+                              : 'bg-gray-200 dark:bg-gray-700 text-gray-400'
+                          }`}>
+                            {step.status === 'completed' ? (
+                              <CheckCircle2 className="w-5 h-5" />
+                            ) : (
+                              <step.icon className="w-5 h-5" />
+                            )}
+                          </div>
+                          {index < arr.length - 1 && (
+                            <div className={`w-0.5 h-16 ${
+                              step.status === 'completed' ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-700'
+                            }`} />
+                          )}
+                        </div>
+                        
+                        {/* Step Info */}
+                        <div className="flex-1 pb-2">
+                          <div className="flex items-center gap-2">
+                            <h4 className={`font-bold ${
+                              step.status === 'completed' 
+                                ? 'text-green-600 dark:text-green-400' 
+                                : step.status === 'current'
+                                ? 'text-primary'
+                                : 'text-gray-400'
+                            }`}>
+                              {step.title}
+                            </h4>
+                            {step.status === 'current' && (
+                              <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">
+                                Em andamento
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{step.address}</p>
+                          {step.date && (
+                            <p className="text-xs text-gray-400 mt-1">{step.date}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Resumo */}
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600 dark:text-gray-400">Total do Pedido</span>
+                  <span className="text-2xl font-black text-primary">
+                    R$ {selectedOrder.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
