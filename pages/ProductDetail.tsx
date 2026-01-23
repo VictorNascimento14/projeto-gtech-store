@@ -213,7 +213,26 @@ const ProductDetail: React.FC = () => {
           replies: []
         }
       ];
-      setComments(defaultComments);
+      
+      // Carregar avaliações do localStorage (vindas da página de pedidos)
+      const savedReviews = JSON.parse(localStorage.getItem('productReviews') || '[]');
+      const productReviews = savedReviews
+        .filter((review: any) => review.productId === product.id)
+        .map((review: any) => ({
+          id: review.id,
+          author: review.author,
+          avatar: review.avatar,
+          rating: review.rating,
+          date: review.date,
+          text: review.text,
+          avatarColor: review.avatarColor,
+          likes: review.likes || 0,
+          likedBy: review.likedBy || [],
+          replies: review.replies || []
+        }));
+      
+      // Combinar avaliações salvas com as padrão (avaliações salvas primeiro)
+      setComments([...productReviews, ...defaultComments]);
     }
   }, [product]);
 

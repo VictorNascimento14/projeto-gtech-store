@@ -16,7 +16,7 @@ const AVAILABLE_MODELS = [
     id: 'nike-pegasus-36',
     name: 'Nike Air Zoom Pegasus 36',
     url: '/nike_air_zoom_pegasus_36/scene.gltf',
-    scale: 1.5,
+    scale: 1.3,
     position: [0, -15, 0],
     description: 'O tênis perfeito para corridas longas. Com tecnologia Zoom Air na parte dianteira e traseira, oferece amortecimento responsivo e durável. Seu design aerodinâmico combina performance e estilo.',
     price: 'R$ 899,90',
