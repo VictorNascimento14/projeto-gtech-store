@@ -27,6 +27,7 @@ const MyOrders: React.FC = () => {
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
   const [hoveredStar, setHoveredStar] = useState(0);
+  const [statusFilter, setStatusFilter] = useState<'pending' | 'delivered' | 'cancelled'>('pending');
 
   const userOrders = orders.filter(order => order.customerId === user?.id);
 
@@ -381,15 +382,82 @@ const MyOrders: React.FC = () => {
   return (
     <div className="bg-[#F9F8FE] dark:bg-gray-950 min-h-screen py-10 transition-colors">
       <div className="container mx-auto px-4 lg:px-12">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Meus Pedidos</h1>
             <p className="text-gray-500 dark:text-gray-400">Acompanhe seus pedidos em andamento</p>
           </div>
         </div>
 
+        {/* Filtros de Status */}
+        <div className="flex flex-wrap gap-2 mb-6">
+          <button
+            onClick={() => setStatusFilter('pending')}
+            className={`px-5 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+              statusFilter === 'pending'
+                ? 'bg-yellow-500 text-white shadow-lg shadow-yellow-500/30'
+                : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:border-yellow-500 hover:text-yellow-500'
+            }`}
+          >
+            <span className="flex items-center gap-2">
+              <span className={`w-2 h-2 rounded-full ${statusFilter === 'pending' ? 'bg-white' : 'bg-yellow-500'}`}></span>
+              Pendentes
+              <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                statusFilter === 'pending' ? 'bg-white/20' : 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400'
+              }`}>
+                {userOrders.filter(o => o.status === 'pending' || o.status === 'processing' || o.status === 'shipped').length}
+              </span>
+            </span>
+          </button>
+          
+          <button
+            onClick={() => setStatusFilter('delivered')}
+            className={`px-5 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+              statusFilter === 'delivered'
+                ? 'bg-green-500 text-white shadow-lg shadow-green-500/30'
+                : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:border-green-500 hover:text-green-500'
+            }`}
+          >
+            <span className="flex items-center gap-2">
+              <span className={`w-2 h-2 rounded-full ${statusFilter === 'delivered' ? 'bg-white' : 'bg-green-500'}`}></span>
+              Entregues
+              <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                statusFilter === 'delivered' ? 'bg-white/20' : 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400'
+              }`}>
+                {userOrders.filter(o => o.status === 'delivered').length}
+              </span>
+            </span>
+          </button>
+          
+          <button
+            onClick={() => setStatusFilter('cancelled')}
+            className={`px-5 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+              statusFilter === 'cancelled'
+                ? 'bg-red-500 text-white shadow-lg shadow-red-500/30'
+                : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:border-red-500 hover:text-red-500'
+            }`}
+          >
+            <span className="flex items-center gap-2">
+              <span className={`w-2 h-2 rounded-full ${statusFilter === 'cancelled' ? 'bg-white' : 'bg-red-500'}`}></span>
+              Cancelados
+              <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                statusFilter === 'cancelled' ? 'bg-white/20' : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400'
+              }`}>
+                {userOrders.filter(o => o.status === 'cancelled').length}
+              </span>
+            </span>
+          </button>
+        </div>
+
         <div className="space-y-6">
-          {userOrders.map((order) => (
+          {userOrders
+            .filter(order => {
+              if (statusFilter === 'pending') {
+                return order.status === 'pending' || order.status === 'processing' || order.status === 'shipped';
+              }
+              return order.status === statusFilter;
+            })
+            .map((order) => (
             <div key={order.id} className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm border border-transparent dark:border-gray-800 hover:border-primary/20 transition-all group">
               <div className="flex flex-wrap justify-between items-start gap-4 mb-6 pb-6 border-b border-gray-50 dark:border-gray-800">
                 <div className="space-y-1">
@@ -447,11 +515,22 @@ const MyOrders: React.FC = () => {
             </div>
           ))}
 
-          {userOrders.length === 0 && (
+          {userOrders.filter(order => {
+              if (statusFilter === 'pending') {
+                return order.status === 'pending' || order.status === 'processing' || order.status === 'shipped';
+              }
+              return order.status === statusFilter;
+            }).length === 0 && (
             <div className="text-center py-20 bg-white dark:bg-gray-900 rounded-2xl border border-dashed border-gray-200 dark:border-gray-800">
               <Package className="w-16 h-16 text-gray-200 dark:text-gray-700 mx-auto mb-4" />
-              <p className="text-gray-500 dark:text-gray-400">Você não possui pedidos em andamento.</p>
-              <Link to="/produtos" className="text-primary font-bold hover:underline mt-2 inline-block">Começar a comprar</Link>
+              <p className="text-gray-500 dark:text-gray-400">
+                {statusFilter === 'pending' && 'Você não possui pedidos pendentes.'}
+                {statusFilter === 'delivered' && 'Você não possui pedidos entregues.'}
+                {statusFilter === 'cancelled' && 'Você não possui pedidos cancelados.'}
+              </p>
+              {statusFilter === 'pending' && (
+                <Link to="/produtos" className="text-primary font-bold hover:underline mt-2 inline-block">Começar a comprar</Link>
+              )}
             </div>
           )}
         </div>
