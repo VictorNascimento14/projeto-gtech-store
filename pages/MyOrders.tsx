@@ -28,6 +28,7 @@ const MyOrders: React.FC = () => {
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
   const [hoveredStar, setHoveredStar] = useState(0);
   const [statusFilter, setStatusFilter] = useState<'pending' | 'delivered' | 'cancelled'>('pending');
+  const [pendingSubFilter, setPendingSubFilter] = useState<'all' | 'processing' | 'separating' | 'transit' | 'out_for_delivery'>('all');
 
   const userOrders = orders.filter(order => order.customerId === user?.id);
 
@@ -392,7 +393,10 @@ const MyOrders: React.FC = () => {
         {/* Filtros de Status */}
         <div className="flex flex-wrap gap-2 mb-6">
           <button
-            onClick={() => setStatusFilter('pending')}
+            onClick={() => {
+              setStatusFilter('pending');
+              setPendingSubFilter('all');
+            }}
             className={`px-5 py-2.5 rounded-xl font-semibold text-sm transition-all ${
               statusFilter === 'pending'
                 ? 'bg-yellow-500 text-white shadow-lg shadow-yellow-500/30'
@@ -449,11 +453,78 @@ const MyOrders: React.FC = () => {
           </button>
         </div>
 
+        {/* Sub-filtros para Pendentes */}
+        {statusFilter === 'pending' && (
+          <div className="flex flex-wrap gap-2 mb-6">
+            <button
+              onClick={() => setPendingSubFilter('all')}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                pendingSubFilter === 'all'
+                  ? 'bg-gray-800 dark:bg-white text-white dark:text-gray-800'
+                  : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+              }`}
+            >
+              Todos
+            </button>
+            <button
+              onClick={() => setPendingSubFilter('processing')}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                pendingSubFilter === 'processing'
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 hover:text-blue-600'
+              }`}
+            >
+              Em processamento
+            </button>
+            <button
+              onClick={() => setPendingSubFilter('separating')}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                pendingSubFilter === 'separating'
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-orange-100 dark:hover:bg-orange-900/30 hover:text-orange-600'
+              }`}
+            >
+              Em separação
+            </button>
+            <button
+              onClick={() => setPendingSubFilter('transit')}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                pendingSubFilter === 'transit'
+                  ? 'bg-purple-500 text-white'
+                  : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-purple-100 dark:hover:bg-purple-900/30 hover:text-purple-600'
+              }`}
+            >
+              Em trânsito
+            </button>
+            <button
+              onClick={() => setPendingSubFilter('out_for_delivery')}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                pendingSubFilter === 'out_for_delivery'
+                  ? 'bg-teal-500 text-white'
+                  : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-teal-100 dark:hover:bg-teal-900/30 hover:text-teal-600'
+              }`}
+            >
+              Saiu para entrega
+            </button>
+          </div>
+        )}
+
         <div className="space-y-6">
           {userOrders
             .filter(order => {
+              // Primeiro filtro: status principal
               if (statusFilter === 'pending') {
-                return order.status === 'pending' || order.status === 'processing' || order.status === 'shipped';
+                const isPending = order.status === 'pending' || order.status === 'processing' || order.status === 'shipped';
+                if (!isPending) return false;
+                
+                // Sub-filtro para pendentes
+                if (pendingSubFilter === 'all') return true;
+                if (pendingSubFilter === 'processing') return order.status === 'pending';
+                if (pendingSubFilter === 'separating') return order.status === 'processing';
+                if (pendingSubFilter === 'transit') return order.status === 'shipped';
+                if (pendingSubFilter === 'out_for_delivery') return order.status === 'shipped'; // Mesmo status, mas representa estágio final
+                
+                return true;
               }
               return order.status === statusFilter;
             })
