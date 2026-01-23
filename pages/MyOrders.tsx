@@ -1,16 +1,20 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Lock, Package, Truck, ChevronRight, X, MapPin, CheckCircle2, Circle, Building2, Home } from 'lucide-react';
+import { Lock, Package, Truck, ChevronRight, X, MapPin, CheckCircle2, Circle, Building2, Home, AlertTriangle, Ban, Loader2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useProducts } from '../contexts/ProductContext';
 import { Order } from '../types';
 
 const MyOrders: React.FC = () => {
   const { isLoggedIn, user } = useAuth();
-  const { orders } = useProducts();
+  const { orders, updateOrderStatus } = useProducts();
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [cancelSuccess, setCancelSuccess] = useState(false);
 
   const userOrders = orders.filter(order => order.customerId === user?.id);
 
@@ -64,6 +68,41 @@ const MyOrders: React.FC = () => {
   const closeDetailsModal = () => {
     setShowDetailsModal(false);
     setSelectedOrder(null);
+  };
+
+  // Funções para o modal de cancelamento
+  const handleOpenCancelModal = () => {
+    setShowCancelModal(true);
+    setCancelReason('');
+    setCancelSuccess(false);
+  };
+
+  const closeCancelModal = () => {
+    setShowCancelModal(false);
+    setCancelReason('');
+    setCancelSuccess(false);
+  };
+
+  const handleCancelOrder = async () => {
+    if (!selectedOrder || !cancelReason.trim()) return;
+    
+    setIsCancelling(true);
+    try {
+      await updateOrderStatus(selectedOrder.id, 'cancelled');
+      setCancelSuccess(true);
+      // Atualizar o pedido selecionado localmente
+      setSelectedOrder(prev => prev ? { ...prev, status: 'cancelled' } : null);
+      
+      // Fechar modais após 2 segundos
+      setTimeout(() => {
+        closeCancelModal();
+        closeDetailsModal();
+      }, 2000);
+    } catch (error) {
+      console.error('Erro ao cancelar pedido:', error);
+    } finally {
+      setIsCancelling(false);
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -318,7 +357,121 @@ const MyOrders: React.FC = () => {
                   </span>
                 </div>
               </div>
+
+              {/* Botões de Ação */}
+              {selectedOrder.status !== 'cancelled' && selectedOrder.status !== 'delivered' && (
+                <div className="border-t border-gray-100 dark:border-gray-800 pt-4">
+                  <button
+                    onClick={handleOpenCancelModal}
+                    className="w-full flex items-center justify-center gap-2 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 font-semibold py-3 px-4 rounded-xl transition-colors border border-red-200 dark:border-red-800"
+                  >
+                    <Ban className="w-5 h-5" />
+                    Cancelar Pedido e Solicitar Reembolso
+                  </button>
+                </div>
+              )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Cancelamento de Pedido */}
+      {showCancelModal && selectedOrder && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          {/* Overlay */}
+          <div 
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            onClick={!isCancelling ? closeCancelModal : undefined}
+          />
+          
+          {/* Modal Content */}
+          <div className="relative bg-white dark:bg-gray-900 rounded-2xl w-full max-w-md shadow-2xl">
+            {cancelSuccess ? (
+              // Tela de sucesso
+              <div className="p-8 text-center">
+                <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle2 className="w-8 h-8 text-green-500" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">Pedido Cancelado</h3>
+                <p className="text-gray-500 dark:text-gray-400">
+                  Seu pedido foi cancelado com sucesso. O reembolso será processado em até 7 dias úteis.
+                </p>
+              </div>
+            ) : (
+              <>
+                {/* Header */}
+                <div className="p-6 border-b border-gray-100 dark:border-gray-800">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
+                      <AlertTriangle className="w-6 h-6 text-red-500" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-800 dark:text-white">Cancelar Pedido</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Pedido #{selectedOrder.id}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-6 space-y-4">
+                  <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4">
+                    <p className="text-sm text-yellow-700 dark:text-yellow-400">
+                      <strong>Atenção:</strong> Ao cancelar o pedido, o reembolso será processado em até 7 dias úteis para o mesmo método de pagamento utilizado na compra.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                      Motivo do cancelamento *
+                    </label>
+                    <textarea
+                      value={cancelReason}
+                      onChange={(e) => setCancelReason(e.target.value)}
+                      placeholder="Por favor, informe o motivo do cancelamento..."
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
+                      rows={3}
+                    />
+                  </div>
+
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-500 dark:text-gray-400">Valor a ser reembolsado:</span>
+                      <span className="font-bold text-green-600 dark:text-green-400">
+                        R$ {selectedOrder.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="p-6 border-t border-gray-100 dark:border-gray-800 flex gap-3">
+                  <button
+                    onClick={closeCancelModal}
+                    disabled={isCancelling}
+                    className="flex-1 py-3 px-4 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
+                  >
+                    Voltar
+                  </button>
+                  <button
+                    onClick={handleCancelOrder}
+                    disabled={isCancelling || !cancelReason.trim()}
+                    className="flex-1 py-3 px-4 rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {isCancelling ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Cancelando...
+                      </>
+                    ) : (
+                      <>
+                        <Ban className="w-5 h-5" />
+                        Confirmar Cancelamento
+                      </>
+                    )}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
