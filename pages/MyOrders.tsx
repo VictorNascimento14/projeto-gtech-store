@@ -1,10 +1,10 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Lock, Package, Truck, ChevronRight, X, MapPin, CheckCircle2, Circle, Building2, Home, AlertTriangle, Ban, Loader2, Clock, Navigation, PackageCheck, ExternalLink, ThumbsUp, Gift } from 'lucide-react';
+import { Lock, Package, Truck, ChevronRight, X, MapPin, CheckCircle2, Circle, Building2, Home, AlertTriangle, Ban, Loader2, Clock, Navigation, PackageCheck, ExternalLink, ThumbsUp, Gift, Star, Send, MessageSquare } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useProducts } from '../contexts/ProductContext';
-import { Order } from '../types';
+import { Order, CartItem } from '../types';
 
 const MyOrders: React.FC = () => {
   const { isLoggedIn, user } = useAuth();
@@ -19,6 +19,13 @@ const MyOrders: React.FC = () => {
   const [cancelSuccess, setCancelSuccess] = useState(false);
   const [isConfirmingDelivery, setIsConfirmingDelivery] = useState(false);
   const [deliveryConfirmed, setDeliveryConfirmed] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [selectedProductForReview, setSelectedProductForReview] = useState<CartItem | null>(null);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState('');
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [hoveredStar, setHoveredStar] = useState(0);
 
   const userOrders = orders.filter(order => order.customerId === user?.id);
 
@@ -187,6 +194,62 @@ const MyOrders: React.FC = () => {
   const closeConfirmDeliveryModal = () => {
     setShowConfirmDeliveryModal(false);
     setDeliveryConfirmed(false);
+  };
+
+  // Funções para o modal de avaliação
+  const handleOpenReviewModal = (item: CartItem) => {
+    setSelectedProductForReview(item);
+    setShowReviewModal(true);
+    setReviewRating(5);
+    setReviewComment('');
+    setReviewSubmitted(false);
+  };
+
+  const closeReviewModal = () => {
+    setShowReviewModal(false);
+    setSelectedProductForReview(null);
+    setReviewRating(5);
+    setReviewComment('');
+    setReviewSubmitted(false);
+    setHoveredStar(0);
+  };
+
+  const handleSubmitReview = async () => {
+    if (!selectedProductForReview || !reviewComment.trim()) return;
+    
+    setIsSubmittingReview(true);
+    
+    // Simular delay de envio
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Criar a avaliação
+    const review = {
+      id: Date.now(),
+      productId: selectedProductForReview.productId,
+      author: user?.name || 'Usuário',
+      avatar: user?.name?.charAt(0).toUpperCase() || 'U',
+      rating: reviewRating,
+      date: 'Agora',
+      text: reviewComment,
+      avatarColor: 'from-primary to-primary-hover',
+      likes: 0,
+      likedBy: [],
+      replies: [],
+      createdAt: new Date().toISOString()
+    };
+    
+    // Salvar no localStorage para ser carregado no ProductDetail
+    const existingReviews = JSON.parse(localStorage.getItem('productReviews') || '[]');
+    existingReviews.push(review);
+    localStorage.setItem('productReviews', JSON.stringify(existingReviews));
+    
+    setIsSubmittingReview(false);
+    setReviewSubmitted(true);
+    
+    // Fechar modal após 2 segundos
+    setTimeout(() => {
+      closeReviewModal();
+    }, 2000);
   };
 
   const handleConfirmDelivery = async () => {
@@ -527,6 +590,38 @@ const MyOrders: React.FC = () => {
                       Cancelar Pedido e Solicitar Reembolso
                     </button>
                   )}
+                </div>
+              )}
+
+              {/* Seção de Avaliação - Apenas para pedidos entregues */}
+              {selectedOrder.status === 'delivered' && (
+                <div className="border-t border-gray-100 dark:border-gray-800 pt-4">
+                  <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <Star className="w-4 h-4" />
+                    Avaliar Produtos
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                    Sua opinião é muito importante! Avalie os produtos que você recebeu.
+                  </p>
+                  <div className="space-y-2">
+                    {selectedOrder.items.map((item, idx) => (
+                      <div key={idx} className="flex items-center justify-between bg-gray-50 dark:bg-gray-800 p-3 rounded-xl">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 bg-white dark:bg-gray-700 rounded-lg flex items-center justify-center p-1">
+                            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                          </div>
+                          <p className="font-medium text-gray-800 dark:text-white text-sm">{item.name}</p>
+                        </div>
+                        <button
+                          onClick={() => handleOpenReviewModal(item)}
+                          className="flex items-center gap-2 bg-primary/10 hover:bg-primary/20 text-primary font-semibold py-2 px-4 rounded-lg transition-colors text-sm"
+                        >
+                          <MessageSquare className="w-4 h-4" />
+                          Avaliar
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
@@ -886,6 +981,142 @@ const MyOrders: React.FC = () => {
                       <>
                         <ThumbsUp className="w-5 h-5" />
                         Confirmar
+                      </>
+                    )}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Avaliação de Produto */}
+      {showReviewModal && selectedProductForReview && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          {/* Overlay */}
+          <div 
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            onClick={!isSubmittingReview ? closeReviewModal : undefined}
+          />
+          
+          {/* Modal Content */}
+          <div className="relative bg-white dark:bg-gray-900 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
+            {reviewSubmitted ? (
+              // Tela de sucesso
+              <div className="p-8 text-center">
+                <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle2 className="w-10 h-10 text-green-500" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">Avaliação Enviada!</h3>
+                <p className="text-gray-500 dark:text-gray-400 mb-4">
+                  Obrigado por compartilhar sua opinião. Sua avaliação ajuda outros compradores!
+                </p>
+                <div className="flex justify-center gap-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      className={`w-6 h-6 ${star <= reviewRating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Header */}
+                <div className="bg-gradient-to-br from-primary to-primary-hover p-6 text-white">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center p-2">
+                      <img 
+                        src={selectedProductForReview.image} 
+                        alt={selectedProductForReview.name} 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div>
+                      <p className="text-white/70 text-sm">Avaliar produto</p>
+                      <h3 className="text-lg font-bold">{selectedProductForReview.name}</h3>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-6 space-y-5">
+                  {/* Seleção de Estrelas */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                      Qual sua nota para este produto?
+                    </label>
+                    <div className="flex justify-center gap-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setReviewRating(star)}
+                          onMouseEnter={() => setHoveredStar(star)}
+                          onMouseLeave={() => setHoveredStar(0)}
+                          className="p-1 transition-transform hover:scale-110"
+                        >
+                          <Star
+                            className={`w-10 h-10 transition-colors ${
+                              star <= (hoveredStar || reviewRating)
+                                ? 'text-yellow-400 fill-yellow-400'
+                                : 'text-gray-300 dark:text-gray-600'
+                            }`}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                    <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-2">
+                      {reviewRating === 1 && 'Péssimo'}
+                      {reviewRating === 2 && 'Ruim'}
+                      {reviewRating === 3 && 'Regular'}
+                      {reviewRating === 4 && 'Bom'}
+                      {reviewRating === 5 && 'Excelente'}
+                    </p>
+                  </div>
+
+                  {/* Campo de Comentário */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                      Conte-nos sobre sua experiência *
+                    </label>
+                    <textarea
+                      value={reviewComment}
+                      onChange={(e) => setReviewComment(e.target.value)}
+                      placeholder="O que você achou do produto? Compartilhe detalhes sobre qualidade, tamanho, conforto..."
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
+                      rows={4}
+                    />
+                    <p className="text-xs text-gray-400 mt-1 text-right">
+                      {reviewComment.length}/500 caracteres
+                    </p>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="p-6 border-t border-gray-100 dark:border-gray-800 flex gap-3">
+                  <button
+                    onClick={closeReviewModal}
+                    disabled={isSubmittingReview}
+                    className="flex-1 py-3 px-4 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={handleSubmitReview}
+                    disabled={isSubmittingReview || !reviewComment.trim()}
+                    className="flex-1 py-3 px-4 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {isSubmittingReview ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Enviando...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-5 h-5" />
+                        Enviar Avaliação
                       </>
                     )}
                   </button>
