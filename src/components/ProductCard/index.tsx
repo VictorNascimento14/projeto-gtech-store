@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Product } from '../types';
+import { Product } from '../../types';
 
 interface ProductCardProps {
   product: Product;
@@ -16,10 +16,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {product.discount}
           </span>
         )}
-        <img 
-          alt={product.name} 
-          className="max-h-40 object-contain group-hover:scale-105 transition-transform duration-300 mix-blend-multiply dark:mix-blend-normal" 
-          src={product.image} 
+        <img
+          alt={product.name}
+          className="max-h-40 object-contain group-hover:scale-105 transition-transform duration-300 mix-blend-multiply dark:mix-blend-normal"
+          src={product.image}
         />
       </div>
       <p className="text-xs text-gray-400 font-bold mb-1">{product.category}</p>
