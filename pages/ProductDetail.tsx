@@ -157,6 +157,9 @@ const productComments: Record<number, Comment[]> = {
     }
   ]
 };
+=======
+import ProductCard from '../src/components/ProductCard';
+>>>>>>> f56a413 (refactor: migrate ProductCard component)
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -213,7 +216,7 @@ const ProductDetail: React.FC = () => {
           replies: []
         }
       ];
-      
+
       // Carregar avaliações do localStorage (vindas da página de pedidos)
       const savedReviews = JSON.parse(localStorage.getItem('productReviews') || '[]');
       const productReviews = savedReviews
@@ -230,7 +233,7 @@ const ProductDetail: React.FC = () => {
           likedBy: review.likedBy || [],
           replies: review.replies || []
         }));
-      
+
       // Combinar avaliações salvas com as padrão (avaliações salvas primeiro)
       setComments([...productReviews, ...defaultComments]);
     }
@@ -651,8 +654,7 @@ const ProductDetail: React.FC = () => {
               )}
               <img
                 alt={product.name}
-                
-                className="object-cover object-center w-full h-full mix-blend-multiply dark:mix-blend-normal hover:scale-105 transition-transform duration-500 ease-out"
+                className="object-contain w-3/4 mix-blend-multiply dark:mix-blend-normal hover:scale-105 transition-transform duration-500 ease-out"
                 src={uniqueGallery[activeImageIndex]}
               />
             </div>
@@ -743,19 +745,19 @@ const ProductDetail: React.FC = () => {
               >
                 {selectedSize ? 'Comprar Agora' : 'Selecione um tamanho'}
               </button>
-              
+
               <button
                 onClick={handleToggleFavorite}
                 title={isFavorite(product.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
                 aria-label={isFavorite(product.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
                 className={`px-6 py-6 rounded-3xl font-black transition-all flex items-center justify-center gap-2
-                  ${isFavorite(product.id) 
-                    ? 'bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/30 active:scale-[0.96]' 
+                  ${isFavorite(product.id)
+                    ? 'bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/30 active:scale-[0.96]'
                     : 'bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 active:scale-[0.96]'}
                 `}
               >
-                <Heart 
-                  size={24} 
+                <Heart
+                  size={24}
                   className={isFavorite(product.id) ? 'fill-current' : ''}
                   aria-hidden="true"
                 />
@@ -1183,7 +1185,7 @@ const ProductDetail: React.FC = () => {
                                                   aria-label={`Classificar resposta com ${star} ${star === 1 ? 'estrela' : 'estrelas'}`}
                                                   className="transition-colors"
                                                 >
-                                                  <Star 
+                                                  <Star
                                                     className={`w-3 h-3 ${star <= editReplyRating ? 'fill-yellow-500 text-yellow-500' : 'text-gray-300'}`}
                                                     aria-hidden="true"
                                                   />
