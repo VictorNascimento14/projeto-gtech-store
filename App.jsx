@@ -42,7 +42,7 @@ const AnimatedRoutes = () => {
 
   return (
     <AnimatePresence mode="wait">
-      <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background-light dark:bg-gray-950 font-black text-primary animate-pulse">CARREGANDO...</div>}>
+      <Suspense fallback={null}>
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Layout />}>
             <Route index element={<PageTransition><Home /></PageTransition>} />
