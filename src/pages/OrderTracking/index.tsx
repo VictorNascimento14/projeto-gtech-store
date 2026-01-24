@@ -104,8 +104,9 @@ const OrderTracking: React.FC = () => {
                     ${isActive || isCompleted
                                             ? 'bg-primary text-white scale-110 shadow-primary/30'
                                             : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600'}
+                    ${isActive && !isCompleted ? 'animate-pulse' : ''}
                   `}>
-                                        <StepIcon className="w-8 h-8" />
+                                        <StepIcon className={`w-8 h-8 ${isActive && !isCompleted ? 'animate-bounce' : ''}`} />
                                     </div>
 
                                     {/* Texto */}
@@ -139,7 +140,7 @@ const OrderTracking: React.FC = () => {
                             <div>
                                 <h3 className="text-gray-900 dark:text-white font-bold mb-1">Endereço de Entrega</h3>
                                 <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                                    {order.address || 'Rua Exemplo, 123 - Centro'}<br />
+                                    {order.shippingAddress || 'Rua Exemplo, 123 - Centro'}<br />
                                     São Paulo - SP, 01000-000
                                 </p>
                             </div>
