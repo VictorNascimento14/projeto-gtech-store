@@ -1,22 +1,22 @@
 
 import React, { useEffect, useLayoutEffect } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import Layout from './components/Layout';
-import Home from './pages/Home';
-import ProductListing from './pages/ProductListing';
-import ProductDetail from './pages/ProductDetail';
-import Cart from './pages/Cart';
-import Login from './pages/Login';
-import SignUp from './pages/SignUp';
-import MyOrders from './pages/MyOrders';
-import Categories from './pages/Categories';
-import AdminPanel from './pages/AdminPanel';
+import Layout from '../components/Layout';
+import Home from '../pages/Home';
+import ProductListing from '../pages/ProductListing';
+import ProductDetail from '../pages/ProductDetail';
+import Cart from '../pages/Cart';
+import Login from '../pages/Login';
+import SignUp from '../pages/SignUp';
+import MyOrders from '../pages/MyOrders';
+import Categories from '../pages/Categories';
+import AdminPanel from '../pages/AdminPanel';
 import { CartProvider } from './contexts/CartContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProductProvider } from './contexts/ProductContext';
 
 import { AnimatePresence } from 'framer-motion';
-import PageTransition from './components/PageTransition';
+import PageTransition from '../components/PageTransition';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
