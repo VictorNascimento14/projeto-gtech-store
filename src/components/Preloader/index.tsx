@@ -1,14 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { ShoppingBag, Package, Zap, Sparkles } from 'lucide-react';
 
-const Preloader: React.FC<{ onLoadComplete: () => void }> = ({ onLoadComplete }) => {
-  const [progress, setProgress] = useState(0);
+const Preloader: React.FC<{
+  onLoadComplete: () => void;
+  externalProgress?: number;
+}> = ({ onLoadComplete, externalProgress }) => {
+  const [internalProgress, setInternalProgress] = useState(0);
   const [stage, setStage] = useState(0);
 
+  const progress = externalProgress !== undefined ? externalProgress : internalProgress;
+
   useEffect(() => {
-    // Simula o carregamento progressivo
+    // If external progress is provided, only use it
+    if (externalProgress !== undefined) {
+      if (externalProgress >= 100) {
+        const timer = setTimeout(() => onLoadComplete(), 800);
+        return () => clearTimeout(timer);
+      }
+      return;
+    }
+
+    // Simula o carregamento progressivo apenas se não houver progresso externo
     const progressInterval = setInterval(() => {
-      setProgress(prev => {
+      setInternalProgress(prev => {
         if (prev >= 100) {
           clearInterval(progressInterval);
           setTimeout(() => onLoadComplete(), 500);
@@ -54,10 +68,10 @@ const Preloader: React.FC<{ onLoadComplete: () => void }> = ({ onLoadComplete })
       {/* Círculos concêntricos animados */}
       <div className="absolute">
         <div className="w-[400px] h-[400px] border-2 border-primary/20 rounded-full animate-ping-slow" />
-        <div className="absolute inset-0 w-[400px] h-[400px] border-2 border-primary/10 rounded-full animate-ping-slower" 
-             style={{ animationDelay: '0.5s' }} />
-        <div className="absolute inset-0 w-[400px] h-[400px] border border-primary/5 rounded-full animate-ping-slowest" 
-             style={{ animationDelay: '1s' }} />
+        <div className="absolute inset-0 w-[400px] h-[400px] border-2 border-primary/10 rounded-full animate-ping-slower"
+          style={{ animationDelay: '0.5s' }} />
+        <div className="absolute inset-0 w-[400px] h-[400px] border border-primary/5 rounded-full animate-ping-slowest"
+          style={{ animationDelay: '1s' }} />
       </div>
 
       {/* Conteúdo principal */}
@@ -66,7 +80,7 @@ const Preloader: React.FC<{ onLoadComplete: () => void }> = ({ onLoadComplete })
         <div className="relative">
           {/* Brilho de fundo */}
           <div className="absolute inset-0 bg-primary/30 blur-3xl rounded-full animate-pulse" />
-          
+
           {/* Ícones rotativos */}
           <div className="relative w-32 h-32 flex items-center justify-center">
             <div className={`absolute transition-all duration-500 ${stage === 0 ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}>
@@ -78,7 +92,7 @@ const Preloader: React.FC<{ onLoadComplete: () => void }> = ({ onLoadComplete })
             <div className={`absolute transition-all duration-500 ${stage === 2 ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}>
               <Zap className="w-16 h-16 text-primary animate-bounce-slow" />
             </div>
-            
+
             {/* Anel rotativo externo */}
             <div className="absolute w-28 h-28 border-2 border-t-primary border-r-primary/50 border-b-transparent border-l-transparent rounded-full animate-spin" />
             <div className="absolute w-24 h-24 border-2 border-t-transparent border-r-transparent border-b-primary/50 border-l-primary rounded-full animate-spin-reverse" />
@@ -102,7 +116,7 @@ const Preloader: React.FC<{ onLoadComplete: () => void }> = ({ onLoadComplete })
             <span className={`transition-all duration-300 ${stage === 1 ? 'text-primary scale-110' : 'text-white'}`}>r</span>
             <span className={`transition-all duration-300 ${stage === 2 ? 'text-primary scale-110' : 'text-white'}`}>e</span>
           </h2>
-          
+
           <p className="text-gray-400 text-sm font-medium animate-pulse">
             {stage === 0 && 'Preparando sua experiência de compra...'}
             {stage === 1 && 'Carregando os melhores produtos...'}
@@ -114,18 +128,18 @@ const Preloader: React.FC<{ onLoadComplete: () => void }> = ({ onLoadComplete })
         <div className="w-80 space-y-3">
           <div className="relative h-2 bg-gray-800 rounded-full overflow-hidden">
             {/* Barra de progresso com gradiente */}
-            <div 
+            <div
               className="absolute inset-y-0 left-0 bg-gradient-to-r from-primary via-pink-500 to-primary bg-[length:200%_100%] animate-gradient-x rounded-full transition-all duration-300 ease-out"
               style={{ width: `${Math.min(progress, 100)}%` }}
             />
-            
+
             {/* Brilho na barra */}
-            <div 
+            <div
               className="absolute inset-y-0 left-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"
               style={{ width: `${Math.min(progress, 100)}%` }}
             />
           </div>
-          
+
           {/* Porcentagem */}
           <div className="flex justify-between items-center text-xs">
             <span className="text-gray-500 font-bold uppercase tracking-wider">Carregando</span>
