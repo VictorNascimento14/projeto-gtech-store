@@ -986,11 +986,13 @@ const AdminPanel: React.FC = () => {
                           </div>
                         </td>
                         <td className="px-4 lg:px-8 py-4 lg:py-6 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">{product.category}</td>
-                        <td className="px-4 lg:px-8 py-4 lg:py-6 font-black text-gray-800 dark:text-white text-xs lg:text-sm">
-                          R$ {product.price},00
-                          {product.discount && (
-                            <span className="ml-2 text-[8px] bg-accent-yellow text-gray-800 px-1.5 py-0.5 rounded-full font-black">{product.discount}</span>
-                          )}
+                        <td className="px-4 lg:px-8 py-4 lg:py-6">
+                          <div className="flex items-center gap-2 flex-nowrap whitespace-nowrap">
+                            <span className="font-black text-gray-800 dark:text-white text-xs lg:text-sm">R$ {product.price},00</span>
+                            {product.discount && (
+                              <span className="text-[8px] bg-accent-yellow text-gray-800 px-1.5 py-0.5 rounded-full font-black shrink-0">{product.discount}</span>
+                            )}
+                          </div>
                         </td>
                         <td className="px-4 lg:px-8 py-4 lg:py-6">
                           {editingStockProductId === product.id ? (
