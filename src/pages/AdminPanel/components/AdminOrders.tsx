@@ -20,13 +20,13 @@ const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, updateOrderStatus }) 
                         </div>
                         <div className="flex gap-2">
                             <div className="px-4 py-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl">
-                                <span className="text-xs font-bold text-yellow-600">{orders.filter(o => o.status === 'pending').length} Pendente</span>
+                                <span className="text-xs font-bold text-yellow-600">{orders.filter(o => o.status === 'pending').length} Recebidos</span>
                             </div>
                             <div className="px-4 py-2 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
-                                <span className="text-xs font-bold text-blue-600">{orders.filter(o => o.status === 'processing').length} Processando</span>
+                                <span className="text-xs font-bold text-blue-600">{orders.filter(o => o.status === 'processing').length} Preparando</span>
                             </div>
                             <div className="px-4 py-2 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
-                                <span className="text-xs font-bold text-purple-600">{orders.filter(o => o.status === 'shipped').length} Enviado</span>
+                                <span className="text-xs font-bold text-purple-600">{orders.filter(o => o.status === 'shipped').length} Transporte</span>
                             </div>
                         </div>
                     </div>
@@ -34,9 +34,9 @@ const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, updateOrderStatus }) 
                 <div className="p-4 space-y-4">
                     {orders.map((order) => {
                         const statusConfig = {
-                            pending: { label: 'Pendente', color: 'yellow', icon: AlertTriangle },
-                            processing: { label: 'Processando', color: 'blue', icon: Package },
-                            shipped: { label: 'Enviado', color: 'purple', icon: Truck },
+                            pending: { label: 'Pedido Recebido', color: 'yellow', icon: AlertTriangle },
+                            processing: { label: 'Em Preparação', color: 'blue', icon: Package },
+                            shipped: { label: 'Em Transporte', color: 'purple', icon: Truck },
                             delivered: { label: 'Entregue', color: 'green', icon: CheckCircle },
                             cancelled: { label: 'Cancelado', color: 'red', icon: X }
                         };
