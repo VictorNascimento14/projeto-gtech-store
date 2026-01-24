@@ -1,4 +1,4 @@
-import { useFavorites } from '../contexts/FavoritesContext';
+import { useFavorites } from '../../contexts/FavoritesContext';
 import { useNavigate } from 'react-router-dom';
 import { Heart, Trash2, AlertCircle } from 'lucide-react';
 
@@ -19,7 +19,7 @@ export const Favorites = () => {
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-slate-900 dark:to-slate-800 py-12">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Meus Favoritos</h1>
-          
+
           <div className="flex flex-col items-center justify-center bg-white dark:bg-slate-800 rounded-lg p-12 shadow-lg dark:shadow-none border border-gray-200 dark:border-transparent">
             <Heart className="w-16 h-16 text-red-500 mb-4 opacity-50" />
             <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">Nenhum favorito ainda</h2>

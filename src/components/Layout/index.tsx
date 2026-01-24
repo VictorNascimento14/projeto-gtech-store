@@ -1,16 +1,16 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { useCart } from '../src/contexts/CartContext';
-import { useAuth } from '../src/contexts/AuthContext';
-import { useProducts } from '../src/contexts/ProductContext';
-import { useFavorites } from '../src/contexts/FavoritesContext';
-import { Product } from '../src/types';
-import Logo from '../src/components/Logo';
-import Footer from '../src/components/Footer';
-import DarkModeToggle from '../src/components/DarkModeToggle';
-import Header from '../src/components/Header';
-import UserSidebar from '../src/components/UserSidebar';
+import { useCart } from '../../contexts/CartContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { useProducts } from '../../contexts/ProductContext';
+import { useFavorites } from '../../contexts/FavoritesContext';
+import { Product } from '../../types';
+import Logo from '../Logo';
+import Footer from '../Footer';
+import DarkModeToggle from '../DarkModeToggle';
+import Header from '../Header';
+import UserSidebar from '../UserSidebar';
 
 
 
