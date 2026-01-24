@@ -21,12 +21,12 @@ Este projeto é uma loja virtual completa desenvolvida com foco em performance e
 ## ✨ Funcionalidades Principais
 
 - **🛒 Carrinho de Compras Interativo**: Gerenciamento completo de itens, cálculo de totais e checkout.
-- **👮 Painel Administrativo**: Área restrita para gerenciamento de produtos e estoque.
-- **🔐 Autenticação Segura**: Sistema de Login e Cadastro (integração planejada/mock).
-- **📦 Catálogo de Produtos**: Listagem com filtros, busca e páginas de detalhes ricas.
-- **📱 Design Responsivo**: Interface adaptável para Mobile, Tablet e Desktop.
-- **🎨 UI/UX Premium**: Animações suaves com Framer Motion e GSAP, visualizações 3D com Three.js.
-- **👤 Perfil do Usuário**: Histórico de pedidos e configurações de conta.
+- **👮 Painel Administrativo Modular**: Área de gestão totalmente refatorada e organizada em componentes modulares.
+- **🔐 Autenticação com Supabase**: Sistema de Login e Cadastro integrado ao Banco de Dados.
+- **📦 Catálogo de Produtos**: Listagem com filtros inteligentes, busca em tempo real e detalhes técnicos.
+- **📱 Design Responsivo**: Interface mobile-first adaptável para todos os dispositivos.
+- **🎨 UI/UX Premium**: Animações fluidas com Framer Motion e GSAP, visualizações 3D interativas.
+- **✨ Transições Suaves**: Navegação dinâmica entre páginas com transições sincronizadas.
 
 ## 🚀 Tecnologias Utilizadas
 
@@ -36,7 +36,7 @@ Este projeto é uma loja virtual completa desenvolvida com foco em performance e
 - **Animações**: Framer Motion, GSAP
 - **3D**: Three.js, React Three Fiber, Drei
 - **Roteamento**: React Router Dom v7
-- **Database/Backend**: Supabase (Autenticação e Banco de Dados)
+- **Backend/BaaS**: Supabase (Auth, Database, Storage)
 - **Ícones**: Lucide React
 
 ## 💻 Instalação e Execução
