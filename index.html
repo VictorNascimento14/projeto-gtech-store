@@ -8,17 +8,29 @@
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script>
-    // Sempre inicia em light mode, a menos que o usuário já tenha escolhido dark
-    if (localStorage.theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.theme = 'light';
-    }
+    (function () {
+      const isDark = localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+        document.documentElement.style.backgroundColor = '#030712';
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.style.backgroundColor = '#F9F8FE';
+        localStorage.theme = 'light';
+      }
+    })();
   </script>
   <style>
     body {
       font-family: 'Inter', sans-serif;
+      /* gray-950 - Matches Preloader */
+      margin: 0;
+    }
+
+    #root:empty {
+      background-color: #030712;
+      width: 100vw;
+      height: 100vh;
     }
 
     .hide-scrollbar::-webkit-scrollbar {
