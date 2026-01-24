@@ -6,10 +6,10 @@ import { useGLTF, OrbitControls, ContactShadows, Environment, Stage, Html } from
 import * as LucideIcons from 'lucide-react';
 import gsap from 'gsap';
 import * as THREE from 'three';
-import ProductCard from '../components/ProductCard';
+import ProductCard from '../src/components/ProductCard';
 import Preloader from '../src/components/Preloader';
-import { CATEGORIES } from '../constants';
-import { useProducts } from '../contexts/ProductContext';
+import { CATEGORIES } from '../src/constants';
+import { useProducts } from '../src/contexts/ProductContext';
 
 const AVAILABLE_MODELS = [
   {

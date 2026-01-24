@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SearchX, Filter } from 'lucide-react';
-import ProductCard from '../components/ProductCard';
+import ProductCard from '../src/components/ProductCard';
 import { CATEGORIES } from '../constants';
 import { useProducts } from '../contexts/ProductContext';
 
@@ -25,9 +25,9 @@ const ProductListing: React.FC = () => {
   }, [initialCategory]);
 
   const toggleCategory = (catName: string) => {
-    setSelectedCategories(prev => 
-      prev.includes(catName) 
-        ? prev.filter(c => c !== catName) 
+    setSelectedCategories(prev =>
+      prev.includes(catName)
+        ? prev.filter(c => c !== catName)
         : [...prev, catName]
     );
   };
@@ -37,8 +37,8 @@ const ProductListing: React.FC = () => {
 
     // 1. Filtro de Texto (Barra de pesquisa)
     if (searchFilter) {
-      results = results.filter(p => 
-        p.name.toLowerCase().includes(searchFilter) || 
+      results = results.filter(p =>
+        p.name.toLowerCase().includes(searchFilter) ||
         p.category.toLowerCase().includes(searchFilter)
       );
     }
@@ -72,10 +72,10 @@ const ProductListing: React.FC = () => {
           </span>
           <span className="text-gray-400"> - {filteredProducts.length} produtos</span>
         </div>
-        
+
         <div className="flex items-center border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 bg-white dark:bg-gray-900 shadow-sm">
           <span className="font-bold text-xs mr-2 whitespace-nowrap text-gray-500 uppercase tracking-tighter">Ordenar por:</span>
-          <select 
+          <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
             className="bg-transparent border-none text-sm p-0 pr-8 focus:ring-0 cursor-pointer dark:text-white font-medium"
@@ -100,11 +100,11 @@ const ProductListing: React.FC = () => {
               {CATEGORIES.map((cat) => (
                 <label key={cat.name} className="flex items-center gap-3 cursor-pointer group">
                   <div className="relative flex items-center">
-                    <input 
+                    <input
                       checked={selectedCategories.includes(cat.name)}
                       onChange={() => toggleCategory(cat.name)}
-                      className="w-5 h-5 rounded border-gray-300 dark:border-gray-700 bg-transparent text-primary focus:ring-primary transition-all cursor-pointer" 
-                      type="checkbox" 
+                      className="w-5 h-5 rounded border-gray-300 dark:border-gray-700 bg-transparent text-primary focus:ring-primary transition-all cursor-pointer"
+                      type="checkbox"
                     />
                   </div>
                   <span className={`text-sm transition-colors ${selectedCategories.includes(cat.name) ? 'text-primary font-bold' : 'text-gray-600 dark:text-gray-400 group-hover:text-primary'}`}>
@@ -114,9 +114,9 @@ const ProductListing: React.FC = () => {
               ))}
             </div>
           </div>
-          
+
           {(selectedCategories.length > 0 || searchFilter) && (
-            <button 
+            <button
               onClick={clearFilters}
               className="w-full py-2 text-xs font-bold text-primary border border-primary/20 rounded-lg hover:bg-primary/5 transition-colors"
             >
@@ -136,7 +136,7 @@ const ProductListing: React.FC = () => {
             <div className="flex flex-col items-center justify-center py-32 bg-white dark:bg-gray-900 rounded-2xl border border-dashed border-gray-200 dark:border-gray-800">
               <SearchX className="w-16 h-16 text-gray-300 dark:text-gray-700 mb-4" />
               <p className="text-lg font-medium text-gray-500">Nenhum produto encontrado.</p>
-              <button 
+              <button
                 onClick={clearFilters}
                 className="mt-4 text-primary font-bold hover:underline"
               >

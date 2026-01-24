@@ -4,17 +4,17 @@ import { useParams, Link } from 'react-router-dom';
 import { Star, CheckCircle, X, AlertCircle, ArrowRight } from 'lucide-react';
 import { useProducts } from '../contexts/ProductContext';
 import { useCart } from '../contexts/CartContext';
-import ProductCard from '../components/ProductCard';
+import ProductCard from '../src/components/ProductCard';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { getProductById, products } = useProducts();
   const { addItem } = useCart();
-  
+
   const product = getProductById(Number(id));
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState('Padrão');
-  const [showToast, setShowToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+  const [showToast, setShowToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   // Mapeamento de tamanhos por categoria para exibição
@@ -131,17 +131,17 @@ const ProductDetail: React.FC = () => {
                   {product.discount}
                 </span>
               )}
-              <img 
-                alt={product.name} 
-                className="object-contain w-3/4 mix-blend-multiply dark:mix-blend-normal hover:scale-105 transition-transform duration-500 ease-out" 
-                src={uniqueGallery[activeImageIndex]} 
+              <img
+                alt={product.name}
+                className="object-contain w-3/4 mix-blend-multiply dark:mix-blend-normal hover:scale-105 transition-transform duration-500 ease-out"
+                src={uniqueGallery[activeImageIndex]}
               />
             </div>
 
             <div className="grid grid-cols-5 gap-4">
               {uniqueGallery.map((img, i) => (
-                <button 
-                  key={i} 
+                <button
+                  key={i}
                   onClick={() => setActiveImageIndex(i)}
                   className={`aspect-square bg-white dark:bg-gray-800 rounded-2xl flex items-center justify-center p-2 border-2 transition-all ${activeImageIndex === i ? 'border-primary ring-4 ring-primary/10' : 'border-gray-50 dark:border-gray-700 hover:border-primary/50 opacity-60 hover:opacity-100'}`}
                 >
@@ -156,10 +156,10 @@ const ProductDetail: React.FC = () => {
               <h1 className="text-4xl font-black text-gray-800 dark:text-white mb-2 leading-tight tracking-tight">{product.name}</h1>
               <div className="text-xs text-gray-400 font-bold uppercase tracking-[0.2em]">{product.category}</div>
             </div>
-            
+
             <div className="flex items-center gap-3">
               <div className="flex text-yellow-500">
-                {[1,2,3,4,5].map(i => <Star key={i} className="w-4 h-4 fill-current" />)}
+                {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-4 h-4 fill-current" />)}
               </div>
               <span className="text-[10px] text-gray-400 font-black uppercase tracking-widest">(PRODUTO EM ALTA)</span>
             </div>
@@ -191,20 +191,20 @@ const ProductDetail: React.FC = () => {
                   {currentSizeSet.map(size => {
                     const available = isSizeAvailable(size);
                     return (
-                      <button 
-                        key={size} 
-                        onClick={() => handleSizeClick(size)} 
+                      <button
+                        key={size}
+                        onClick={() => handleSizeClick(size)}
                         className={`relative min-w-[56px] h-14 px-4 rounded-2xl border-2 flex items-center justify-center text-sm transition-all font-black overflow-hidden
-                          ${!available ? 'opacity-30 border-gray-100 cursor-not-allowed bg-gray-50 grayscale' : 
-                            selectedSize === size ? 'bg-primary text-white border-primary shadow-xl shadow-primary/30 scale-110 z-10' : 
-                            'border-gray-100 dark:border-gray-800 dark:text-gray-400 hover:border-primary/30 hover:text-primary bg-white dark:bg-gray-900'}
+                          ${!available ? 'opacity-30 border-gray-100 cursor-not-allowed bg-gray-50 grayscale' :
+                            selectedSize === size ? 'bg-primary text-white border-primary shadow-xl shadow-primary/30 scale-110 z-10' :
+                              'border-gray-100 dark:border-gray-800 dark:text-gray-400 hover:border-primary/30 hover:text-primary bg-white dark:bg-gray-900'}
                         `}
                       >
                         {size}
                         {!available && (
                           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                             <div className="w-full h-px bg-gray-400 -rotate-45 absolute opacity-40"></div>
-                             <div className="w-full h-px bg-gray-400 rotate-45 absolute opacity-40"></div>
+                            <div className="w-full h-px bg-gray-400 -rotate-45 absolute opacity-40"></div>
+                            <div className="w-full h-px bg-gray-400 rotate-45 absolute opacity-40"></div>
                           </div>
                         )}
                       </button>
@@ -215,8 +215,8 @@ const ProductDetail: React.FC = () => {
             )}
 
             <div className="pt-6">
-              <button 
-                onClick={handleBuy} 
+              <button
+                onClick={handleBuy}
                 disabled={!selectedSize}
                 className={`w-full font-black py-6 rounded-3xl uppercase tracking-[0.3em] text-xs transition-all flex items-center justify-center gap-4
                   ${selectedSize ? 'bg-primary hover:bg-primary-hover text-white shadow-2xl shadow-primary/30 active:scale-[0.96]' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}
@@ -236,15 +236,15 @@ const ProductDetail: React.FC = () => {
                 <h3 className="text-3xl font-black text-gray-800 dark:text-white uppercase tracking-tighter">Produtos Relacionados</h3>
                 <p className="text-gray-400 text-sm font-medium">Itens da categoria {product.category} que você também pode gostar.</p>
               </div>
-              <Link 
-                to={`/produtos?categoria=${product.category}`} 
+              <Link
+                to={`/produtos?categoria=${product.category}`}
                 className="text-primary font-bold text-sm hover:translate-x-1 transition-transform flex items-center gap-2 group"
               >
-                Ver tudo nesta categoria 
+                Ver tudo nesta categoria
                 <ArrowRight className="w-4 h-4 group-hover:scale-110 transition-transform" />
               </Link>
             </div>
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {relatedProducts.map(p => (
                 <div key={p.id} className="hover:-translate-y-2 transition-transform duration-300">
