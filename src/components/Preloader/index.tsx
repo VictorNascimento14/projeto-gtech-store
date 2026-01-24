@@ -6,17 +6,53 @@ const Preloader: React.FC<{
   externalProgress?: number;
 }> = ({ onLoadComplete, externalProgress }) => {
   const [internalProgress, setInternalProgress] = useState(0);
+  const [visualProgress, setVisualProgress] = useState(0);
   const [stage, setStage] = useState(0);
 
-  const progress = externalProgress !== undefined ? externalProgress : internalProgress;
+  const targetProgress = externalProgress !== undefined ? externalProgress : internalProgress;
+
+  // Animação suave para o progresso visual
+  useEffect(() => {
+    let animationFrame: number;
+
+    const updateProgress = () => {
+      setVisualProgress(prev => {
+        if (prev >= 100 && targetProgress >= 100) {
+          return 100;
+        }
+
+        // Se o alvo for 100, não pula, vai subindo gradualmente
+        const diff = targetProgress - prev;
+
+        // Se diff < 0 (alvo baixou por algum motivo), não volta atrás na barra
+        if (diff <= 0) return prev;
+
+        // Velocidade adaptativa: mais lento ao chegar no fim para suavidade
+        // 0.05 é a força de interpolação
+        const increment = Math.max(0.05, diff * 0.03);
+        const next = Math.min(prev + increment, 100);
+
+        return next;
+      });
+
+      animationFrame = requestAnimationFrame(updateProgress);
+    };
+
+    animationFrame = requestAnimationFrame(updateProgress);
+    return () => cancelAnimationFrame(animationFrame);
+  }, [targetProgress]);
+
+  // Dispara o término apenas quando o visual chega em 100
+  useEffect(() => {
+    if (visualProgress >= 100) {
+      const timer = setTimeout(() => onLoadComplete(), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [visualProgress, onLoadComplete]);
 
   useEffect(() => {
-    // If external progress is provided, only use it
+    // Se houver progresso externo, não rodamos a simulação interna
     if (externalProgress !== undefined) {
-      if (externalProgress >= 100) {
-        const timer = setTimeout(() => onLoadComplete(), 800);
-        return () => clearTimeout(timer);
-      }
       return;
     }
 
@@ -25,12 +61,12 @@ const Preloader: React.FC<{
       setInternalProgress(prev => {
         if (prev >= 100) {
           clearInterval(progressInterval);
-          setTimeout(() => onLoadComplete(), 500);
           return 100;
         }
-        return prev + Math.random() * 15;
+        // Incremento menor para dar tempo da animação visual ser notada
+        return prev + Math.random() * 8;
       });
-    }, 200);
+    }, 150);
 
     // Muda os estágios visuais
     const stageInterval = setInterval(() => {
@@ -41,7 +77,7 @@ const Preloader: React.FC<{
       clearInterval(progressInterval);
       clearInterval(stageInterval);
     };
-  }, [onLoadComplete]);
+  }, [externalProgress]);
 
   return (
     <div className="fixed inset-0 z-[9999] bg-gradient-to-br from-gray-950 via-gray-900 to-black flex items-center justify-center overflow-hidden">
@@ -78,10 +114,8 @@ const Preloader: React.FC<{
       <div className="relative z-10 flex flex-col items-center gap-12">
         {/* Logo/Ícone animado */}
         <div className="relative">
-          {/* Brilho de fundo */}
           <div className="absolute inset-0 bg-primary/30 blur-3xl rounded-full animate-pulse" />
 
-          {/* Ícones rotativos */}
           <div className="relative w-32 h-32 flex items-center justify-center">
             <div className={`absolute transition-all duration-500 ${stage === 0 ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}>
               <ShoppingBag className="w-16 h-16 text-primary animate-bounce-slow" />
@@ -93,7 +127,6 @@ const Preloader: React.FC<{
               <Zap className="w-16 h-16 text-primary animate-bounce-slow" />
             </div>
 
-            {/* Anel rotativo externo */}
             <div className="absolute w-28 h-28 border-2 border-t-primary border-r-primary/50 border-b-transparent border-l-transparent rounded-full animate-spin" />
             <div className="absolute w-24 h-24 border-2 border-t-transparent border-r-transparent border-b-primary/50 border-l-primary rounded-full animate-spin-reverse" />
           </div>
@@ -127,24 +160,20 @@ const Preloader: React.FC<{
         {/* Barra de progresso moderna */}
         <div className="w-80 space-y-3">
           <div className="relative h-2 bg-gray-800 rounded-full overflow-hidden">
-            {/* Barra de progresso com gradiente */}
             <div
               className="absolute inset-y-0 left-0 bg-gradient-to-r from-primary via-pink-500 to-primary bg-[length:200%_100%] animate-gradient-x rounded-full transition-all duration-300 ease-out"
-              style={{ width: `${Math.min(progress, 100)}%` }}
+              style={{ width: `${visualProgress}%` }}
             />
-
-            {/* Brilho na barra */}
             <div
               className="absolute inset-y-0 left-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"
-              style={{ width: `${Math.min(progress, 100)}%` }}
+              style={{ width: `${visualProgress}%` }}
             />
           </div>
 
-          {/* Porcentagem */}
           <div className="flex justify-between items-center text-xs">
             <span className="text-gray-500 font-bold uppercase tracking-wider">Carregando</span>
             <span className="text-primary font-black text-lg tabular-nums">
-              {Math.min(Math.floor(progress), 100)}%
+              {Math.floor(visualProgress)}%
             </span>
           </div>
         </div>
