@@ -149,7 +149,7 @@ const Layout: React.FC = () => {
             </button>
 
             <Link to="/" className="flex items-center gap-2 md:mx-0 mx-auto">
-              <img src="../public/assets/logo-header.svg" alt="logo da página" className="h-7 md:h-auto" />
+              <img src="/assets/logo-header.svg" alt="logo da página" className="h-7 md:h-auto" />
             </Link>
 
             {/* Espaçador invisível para manter o logo centralizado no mobile */}
