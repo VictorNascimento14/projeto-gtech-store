@@ -9,6 +9,18 @@ interface AdminOrdersProps {
 }
 
 const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, updateOrderStatus }) => {
+    const [showCancelModal, setShowCancelModal] = React.useState(false);
+    const [orderToCancel, setOrderToCancel] = React.useState<number | null>(null);
+
+    const handleStatusChange = (orderId: number, newStatus: Order['status']) => {
+        if (newStatus === 'cancelled') {
+            setOrderToCancel(orderId);
+            setShowCancelModal(true);
+        } else {
+            updateOrderStatus(orderId, newStatus);
+        }
+    };
+
     return (
         <div className="animate-in fade-in duration-500 space-y-6">
             <div className="bg-white dark:bg-gray-900 rounded-[32px] shadow-sm border border-transparent dark:border-gray-800 overflow-hidden">
@@ -100,7 +112,7 @@ const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, updateOrderStatus }) 
                                             <div className="relative group">
                                                 <select
                                                     value={order.status}
-                                                    onChange={(e) => updateOrderStatus(order.id, e.target.value as Order['status'])}
+                                                    onChange={(e) => handleStatusChange(order.id, e.target.value as Order['status'])}
                                                     className={`
                                                         w-full appearance-none pl-4 pr-10 py-2.5 rounded-xl text-xs font-bold border outline-none cursor-pointer transition-all duration-300
                                                         shadow-sm hover:shadow-md
@@ -142,6 +154,47 @@ const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, updateOrderStatus }) 
                     )}
                 </div>
             </div>
+
+            {/* Modal de Confirmação de Cancelamento */}
+            {showCancelModal && orderToCancel && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 max-w-md w-full shadow-2xl scale-100 animate-in zoom-in-95 duration-200 border border-gray-100 dark:border-gray-800">
+                        <div className="w-12 h-12 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" />
+                        </div>
+
+                        <h3 className="text-xl font-bold text-center text-gray-900 dark:text-white mb-2">
+                            Cancelar Pedido #{orderToCancel}
+                        </h3>
+
+                        <p className="text-center text-gray-500 dark:text-gray-400 mb-6 text-sm">
+                            Tem certeza que deseja cancelar este pedido? Esta ação notificará o cliente e não poderá ser desfeita automaticamente.
+                        </p>
+
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => {
+                                    setShowCancelModal(false);
+                                    setOrderToCancel(null);
+                                }}
+                                className="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                            >
+                                Voltar
+                            </button>
+                            <button
+                                onClick={() => {
+                                    updateOrderStatus(orderToCancel, 'cancelled');
+                                    setShowCancelModal(false);
+                                    setOrderToCancel(null);
+                                }}
+                                className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold shadow-lg shadow-red-500/30 transition-all"
+                            >
+                                Confirmar Cancelamento
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
