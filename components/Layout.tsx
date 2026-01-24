@@ -136,9 +136,23 @@ const Layout: React.FC = () => {
 
       <header className="bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-50 transition-colors">
         <div className="container mx-auto px-4 lg:px-12 py-6 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8">
-          <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-            <img src="../public/assets/logo-header.svg" alt="logo da página" />
-          </Link>
+          <div className="w-full md:w-auto flex items-center justify-between md:justify-start gap-4 flex-shrink-0">
+            {/* Menu Hambúrguer - Mobile Only - Extrema Esquerda */}
+            <button
+              onClick={() => setIsMenuOpen(true)}
+              className="md:hidden p-2 text-primary bg-white dark:bg-gray-900 border-2 border-primary/20 hover:border-primary rounded-xl shadow-lg shadow-primary/5 transition-all active:scale-95"
+              aria-label="Abrir menu"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+
+            <Link to="/" className="flex items-center gap-2 md:mx-0 mx-auto">
+              <img src="/assets/logo-header.svg" alt="logo da página" className="h-7 md:h-auto" />
+            </Link>
+
+            {/* Espaçador invisível para manter o logo centralizado no mobile */}
+            <div className="w-10 md:hidden" />
+          </div>
 
           <div className="flex-grow max-w-xl w-full relative" ref={searchRef}>
             <form onSubmit={handleSearch} className="relative z-50">

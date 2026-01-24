@@ -26,7 +26,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   return (
     <Link to={`/produto/${product.id}`} className="group cursor-pointer">
-      <div className="bg-white dark:bg-gray-900 rounded shadow-sm dark:shadow-2xl dark:border dark:border-gray-800 p-4 h-64 flex items-center justify-center relative mb-4 group-hover:shadow-md dark:group-hover:border-primary/30 transition-all overflow-hidden">
+      <div className="bg-white dark:bg-gray-900 rounded shadow-sm dark:shadow-2xl dark:border dark:border-gray-800 p-4 aspect-square flex items-center justify-center relative mb-4 group-hover:shadow-md dark:group-hover:border-primary/30 transition-all overflow-hidden">
         {product.discount && (
           <span className="absolute top-4 left-4 bg-accent-yellow text-gray-800 text-xs font-bold px-3 py-1 rounded-full z-10">
             {product.discount}
@@ -45,7 +45,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         
         <img 
           alt={product.name} 
-          className={`w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300 mix-blend-multiply dark:mix-blend-normal ${product.stock === 0 ? 'opacity-60' : ''}`}
+          className={`w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-300 mix-blend-multiply dark:mix-blend-normal ${product.stock === 0 ? 'opacity-60' : ''}`}
           src={product.image} 
         />
         
