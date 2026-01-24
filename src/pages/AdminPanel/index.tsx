@@ -33,6 +33,7 @@ import { useProducts } from '../../contexts/ProductContext';
 import { CATEGORIES } from '../../constants';
 import { Product, Coupon, HeroSlide, Customer, Order } from '../../types';
 import AdminDashboard from './components/AdminDashboard';
+import InventoryTab from './components/InventoryTab';
 
 const AdminPanel: React.FC = () => {
   const { user, isLoggedIn } = useAuth();
@@ -672,308 +673,131 @@ const AdminPanel: React.FC = () => {
               </div>
             </div>
           ) : activeTab === 'orders' ? (
-            /* VIEW PEDIDOS */
-            <div className="animate-in fade-in duration-500 space-y-4 lg:space-y-6">
-              <div className="bg-white dark:bg-gray-900 rounded-[32px] shadow-sm border border-transparent dark:border-gray-800 overflow-hidden">
-                <div className="p-4 lg:p-8 border-b border-gray-50 dark:border-gray-800">
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div>
-                      <h2 className="text-lg lg:text-xl font-bold text-gray-800 dark:text-white">Pedidos</h2>
-                      <p className="text-xs text-gray-500 mt-1">{orders.length} pedidos no sistema</p>
-                    </div>
-                    <div className="flex gap-2 flex-wrap">
-                      <div className="px-3 lg:px-4 py-1.5 lg:py-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl">
-                        <span className="text-[10px] lg:text-xs font-bold text-yellow-600">{orders.filter(o => o.status === 'pending').length} Pendente</span>
-                      </div>
-                      <div className="px-3 lg:px-4 py-1.5 lg:py-2 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
-                        <span className="text-[10px] lg:text-xs font-bold text-blue-600">{orders.filter(o => o.status === 'processing').length} Processando</span>
-                      </div>
-                      <div className="px-3 lg:px-4 py-1.5 lg:py-2 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
-                        <span className="text-[10px] lg:text-xs font-bold text-purple-600">{orders.filter(o => o.status === 'shipped').length} Enviado</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-3 lg:p-4 space-y-3 lg:space-y-4">
-                  {orders.map((order) => {
-                    const statusConfig = {
-                      pending: { label: 'Pendente', color: 'yellow', icon: AlertTriangle },
-                      processing: { label: 'Processando', color: 'blue', icon: Package },
-                      shipped: { label: 'Enviado', color: 'purple', icon: Truck },
-                      delivered: { label: 'Entregue', color: 'green', icon: CheckCircle },
-                      cancelled: { label: 'Cancelado', color: 'red', icon: X }
-                    };
-                    const config = statusConfig[order.status];
-                    const StatusIcon = config.icon;
+            <div className="p-4 space-y-4">
+              {orders.map((order) => {
+                const statusConfig = {
+                  pending: { label: 'Pendente', color: 'yellow', icon: AlertTriangle },
+                  processing: { label: 'Processando', color: 'blue', icon: Package },
+                  shipped: { label: 'Enviado', color: 'purple', icon: Truck },
+                  delivered: { label: 'Entregue', color: 'green', icon: CheckCircle },
+                  cancelled: { label: 'Cancelado', color: 'red', icon: X }
+                };
+                const config = statusConfig[order.status];
+                const StatusIcon = config.icon;
 
-                    return (
-                      <div key={order.id} className="border dark:border-gray-800 rounded-2xl p-4 lg:p-6 hover:shadow-lg transition-all">
-                        <div className="flex flex-col sm:flex-row items-start justify-between gap-3 mb-4">
+                return (
+                  <div key={order.id} className="border dark:border-gray-800 rounded-2xl p-6 hover:shadow-lg transition-all">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className="text-sm font-black text-gray-800 dark:text-white">Pedido #{order.id}</span>
+                          <div className={`flex items-center gap-1 px-3 py-1 bg-${config.color}-50 dark:bg-${config.color}-900/20 rounded-full`}>
+                            <StatusIcon className={`w-3 h-3 text-${config.color}-600`} />
+                            <span className={`text-xs font-bold text-${config.color}-600`}>{config.label}</span>
+                          </div>
+                        </div>
+                        <div className="text-sm text-gray-600 dark:text-gray-300">
+                          <div className="font-medium">{order.customerName}</div>
+                          <div className="text-xs text-gray-400 mt-1">{order.customerEmail}</div>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xl font-black text-primary">
+                          R$ {order.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        </div>
+                        <div className="text-xs text-gray-400 font-medium mt-1">
+                          {new Date(order.createdAt).toLocaleDateString('pt-BR')} às {new Date(order.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border-t dark:border-gray-800 pt-4 space-y-3">
+                      <div className="text-xs text-gray-400 font-bold uppercase tracking-wider">Itens do Pedido:</div>
+                      {order.items.map((item) => (
+                        <div key={item.id} className="flex items-center gap-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl p-3">
+                          <div className="w-12 h-12 bg-white dark:bg-gray-800 rounded-lg overflow-hidden shrink-0">
+                            <img src={item.image} className="w-full h-full object-contain" alt={item.name} />
+                          </div>
                           <div className="flex-1">
-                            <div className="flex items-center gap-2 lg:gap-3 mb-2 flex-wrap">
-                              <span className="text-xs lg:text-sm font-black text-gray-800 dark:text-white">Pedido #{order.id}</span>
-                              <div className={`flex items-center gap-1 px-2 lg:px-3 py-1 bg-${config.color}-50 dark:bg-${config.color}-900/20 rounded-full`}>
-                                <StatusIcon className={`w-3 h-3 text-${config.color}-600`} />
-                                <span className={`text-[10px] lg:text-xs font-bold text-${config.color}-600`}>{config.label}</span>
-                              </div>
-                            </div>
-                            <div className="text-xs lg:text-sm text-gray-600 dark:text-gray-300">
-                              <div className="font-medium">{order.customerName}</div>
-                              <div className="text-[10px] lg:text-xs text-gray-400 mt-1">{order.customerEmail}</div>
+                            <div className="text-sm font-bold text-gray-800 dark:text-white">{item.name}</div>
+                            <div className="text-xs text-gray-400">
+                              {item.color} • {item.size} • Qtd: {item.quantity}
                             </div>
                           </div>
-                          <div className="text-left sm:text-right">
-                            <div className="text-lg lg:text-xl font-black text-primary">
-                              R$ {order.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                            </div>
-                            <div className="text-[10px] lg:text-xs text-gray-400 font-medium mt-1">
-                              {new Date(order.createdAt).toLocaleDateString('pt-BR')} às {new Date(order.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                            </div>
+                          <div className="text-sm font-bold text-gray-600 dark:text-gray-300">
+                            R$ {(item.price * item.quantity).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                           </div>
                         </div>
-
-                        <div className="border-t dark:border-gray-800 pt-3 lg:pt-4 space-y-2 lg:space-y-3">
-                          <div className="text-[10px] lg:text-xs text-gray-400 font-bold uppercase tracking-wider">Itens do Pedido:</div>
-                          {order.items.map((item) => (
-                            <div key={item.id} className="flex items-center gap-2 lg:gap-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl p-2 lg:p-3">
-                              <div className="w-10 lg:w-12 h-10 lg:h-12 bg-white dark:bg-gray-800 rounded-lg overflow-hidden shrink-0">
-                                <img src={item.image} className="w-full h-full object-cover object-center" alt={item.name} />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="text-xs lg:text-sm font-bold text-gray-800 dark:text-white truncate">{item.name}</div>
-                                <div className="text-[10px] lg:text-xs text-gray-400">
-                                  {item.color} • {item.size} • Qtd: {item.quantity}
-                                </div>
-                              </div>
-                              <div className="text-xs lg:text-sm font-bold text-gray-600 dark:text-gray-300 shrink-0">
-                                R$ {(item.price * item.quantity).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-
-                        <div className="border-t dark:border-gray-800 pt-3 lg:pt-4 mt-3 lg:mt-4">
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4 text-xs">
-                            <div>
-                              <span className="text-gray-400 font-bold uppercase tracking-wider text-[10px] lg:text-xs">Pagamento:</span>
-                              <div className="text-gray-600 dark:text-gray-300 font-medium mt-1 text-xs">{order.paymentMethod}</div>
-                            </div>
-                            <div>
-                              <span className="text-gray-400 font-bold uppercase tracking-wider text-[10px] lg:text-xs">Endereço:</span>
-                              <div className="text-gray-600 dark:text-gray-300 font-medium mt-1 text-xs truncate">{order.shippingAddress}</div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-wrap gap-2 mt-3 lg:mt-4">
-                          {order.status === 'pending' && (
-                            <button
-                              onClick={() => updateOrderStatus(order.id, 'processing')}
-                              className="flex-1 min-w-[120px] bg-blue-500 hover:bg-blue-600 text-white px-3 lg:px-4 py-2 rounded-lg text-[10px] lg:text-xs font-bold transition-all"
-                            >
-                              Processar Pedido
-                            </button>
-                          )}
-                          {order.status === 'processing' && (
-                            <button
-                              onClick={() => updateOrderStatus(order.id, 'shipped')}
-                              className="flex-1 min-w-[120px] bg-purple-500 hover:bg-purple-600 text-white px-3 lg:px-4 py-2 rounded-lg text-[10px] lg:text-xs font-bold transition-all"
-                            >
-                              Marcar como Enviado
-                            </button>
-                          )}
-                          {order.status === 'shipped' && (
-                            <button
-                              onClick={() => updateOrderStatus(order.id, 'delivered')}
-                              className="flex-1 min-w-[120px] bg-green-500 hover:bg-green-600 text-white px-3 lg:px-4 py-2 rounded-lg text-[10px] lg:text-xs font-bold transition-all"
-                            >
-                              Marcar como Entregue
-                            </button>
-                          )}
-                          {order.status !== 'cancelled' && order.status !== 'delivered' && (
-                            <button
-                              onClick={() => updateOrderStatus(order.id, 'cancelled')}
-                              className="flex-1 min-w-[120px] px-3 lg:px-4 py-2 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 text-red-600 rounded-lg text-[10px] lg:text-xs font-bold transition-all"
-                            >
-                              Cancelar
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                  {orders.length === 0 && (
-                    <div className="text-center py-12 text-gray-400">
-                      <ShoppingBag className="w-12 h-12 mx-auto mb-3 opacity-20" />
-                      <p className="text-sm font-medium">Nenhum pedido registrado</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div >
-          ) : (
-            /* VIEW INVENTÁRIO (ANTIGA) */
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 lg:gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="xl:col-span-2 bg-white dark:bg-gray-900 rounded-[32px] shadow-sm border border-transparent dark:border-gray-800 overflow-hidden">
-                <div className="p-4 lg:p-8 border-b border-gray-50 dark:border-gray-800 flex justify-between items-center">
-                  <h2 className="text-lg lg:text-xl font-bold text-gray-800 dark:text-white">Estoque Ativo</h2>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left">
-                    <thead>
-                      <tr className="bg-gray-50 dark:bg-gray-800/50 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                        <th className="px-4 lg:px-8 py-3 lg:py-4">Produto</th>
-                        <th className="px-4 lg:px-8 py-3 lg:py-4">Categoria</th>
-                        <th className="px-4 lg:px-8 py-3 lg:py-4">Preço Final</th>
-                        <th className="px-4 lg:px-8 py-3 lg:py-4">Estoque</th>
-                        <th className="px-4 lg:px-8 py-3 lg:py-4 text-right">Ações</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
-                      {products.map((product) => (
-                        <tr key={product.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors group">
-                          <td className="px-4 lg:px-8 py-4 lg:py-6">
-                            <div className="flex items-center gap-4">
-                              <div className="w-10 lg:w-12 h-10 lg:h-12 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 overflow-hidden shrink-0">
-                                <img src={product.image} className="w-full h-full object-cover object-center mix-blend-multiply dark:mix-blend-normal" alt={product.name} />
-                              </div>
-                              <div className="flex flex-col">
-                                <span className="font-bold text-gray-700 dark:text-gray-200 text-xs lg:text-sm truncate max-w-[120px] lg:max-w-[150px] group-hover:text-primary transition-colors">{product.name}</span>
-                                <div className="flex gap-1 mt-1 flex-wrap">
-                                  {product.availableSizes?.map(s => (
-                                    <span key={s} className="text-[8px] bg-gray-100 dark:bg-gray-800 px-1 rounded text-gray-400 font-bold">{s}</span>
-                                  ))}
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-4 lg:px-8 py-4 lg:py-6 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">{product.category}</td>
-                          <td className="px-4 lg:px-8 py-4 lg:py-6">
-                            <div className="flex items-center gap-2 flex-nowrap whitespace-nowrap">
-                              <span className="font-black text-gray-800 dark:text-white text-xs lg:text-sm">R$ {product.price},00</span>
-                              {product.discount && (
-                                <span className="text-[8px] bg-accent-yellow text-gray-800 px-1.5 py-0.5 rounded-full font-black shrink-0">{product.discount}</span>
-                              )}
-                            </div>
-                          </td>
-                          <td className="px-4 lg:px-8 py-4 lg:py-6">
-                            {editingStockProductId === product.id ? (
-                              <div className="flex items-center gap-2">
-                                <input
-                                  type="number"
-                                  min="0"
-                                  value={editingStockValue}
-                                  onChange={(e) => setEditingStockValue(Number(e.target.value))}
-                                  className="w-16 lg:w-20 bg-gray-50 dark:bg-gray-800 border-2 border-primary rounded-lg px-2 lg:px-3 py-1.5 lg:py-2 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary dark:text-white"
-                                  autoFocus
-                                />
-                                <button
-                                  onClick={() => handleSaveStock(product)}
-                                  className="p-1.5 lg:p-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-all"
-                                  title="Salvar"
-                                >
-                                  <CheckCircle className="w-4 h-4" />
-                                </button>
-                                <button
-                                  onClick={handleCancelEditStock}
-                                  className="p-1.5 lg:p-2 bg-gray-300 hover:bg-gray-400 text-gray-700 rounded-lg transition-all"
-                                  title="Cancelar"
-                                >
-                                  <X className="w-4 h-4" />
-                                </button>
-                              </div>
-                            ) : (
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <span className={`text-sm font-black ${(product.stock || 0) === 0 ? 'text-red-500' :
-                                  (product.stock || 0) < 10 ? 'text-orange-500' :
-                                    'text-green-500'
-                                  }`}>
-                                  {product.stock || 0}
-                                </span>
-                                <span className="text-[10px] text-gray-400 font-bold uppercase">un</span>
-                                {(product.stock || 0) === 0 && (
-                                  <span className="ml-1 lg:ml-2 text-[8px] bg-red-50 dark:bg-red-900/20 text-red-600 px-1.5 lg:px-2 py-0.5 rounded-full font-black">SEM ESTOQUE</span>
-                                )}
-                                {(product.stock || 0) > 0 && (product.stock || 0) < 10 && (
-                                  <span className="ml-1 lg:ml-2 text-[8px] bg-orange-50 dark:bg-orange-900/20 text-orange-600 px-1.5 lg:px-2 py-0.5 rounded-full font-black">BAIXO</span>
-                                )}
-                              </div>
-                            )}
-                          </td>
-                          <td className="px-4 lg:px-8 py-4 lg:py-6 text-right">
-                            <div className="flex items-center justify-end gap-1 lg:gap-2">
-                              {editingStockProductId !== product.id && (
-                                <button
-                                  onClick={() => handleEditStock(product)}
-                                  title="Editar Estoque"
-                                  className="p-2 lg:p-3 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 text-blue-600 rounded-xl transition-all"
-                                >
-                                  <Package className="w-4 h-4" />
-                                </button>
-                              )}
-                              <button
-                                onClick={() => handleDeleteProduct(product.id)}
-                                title="Excluir Produto"
-                                className="p-2 lg:p-3 bg-gray-50 dark:bg-gray-800 hover:bg-red-500 hover:text-white text-red-500 rounded-xl transition-all"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                              <button
-                                onClick={() => handleEditProduct(product)}
-                                title="Editar Produto Completo"
-                                className="p-2 lg:p-3 bg-gray-50 dark:bg-gray-800 hover:bg-orange-500 hover:text-white text-orange-500 rounded-xl transition-all"
-                              >
-                                <Edit className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
                       ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-gray-900 rounded-[32px] shadow-sm border border-transparent dark:border-gray-800 overflow-hidden h-fit">
-                <div className="p-4 lg:p-8 border-b border-gray-50 dark:border-gray-800 flex justify-between items-center">
-                  <h2 className="text-lg lg:text-xl font-bold text-gray-800 dark:text-white">Cupons Ativos</h2>
-                </div>
-                <div className="p-3 lg:p-4 space-y-2">
-                  {coupons.length === 0 && (
-                    <div className="text-center py-8 text-gray-400">
-                      <Tag className="w-8 h-8 mx-auto mb-2 opacity-20" />
-                      <p className="text-xs font-bold uppercase tracking-widest">Sem cupons ativos</p>
                     </div>
-                  )}
-                  {coupons.map(coupon => (
-                    <div key={coupon.id} className="flex items-center justify-between p-3 lg:p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-2xl transition-all group">
-                      <div className="flex items-center gap-2 lg:gap-3">
-                        <div className={`p-2.5 rounded-xl transition-colors ${coupon.type === 'shipping' ? 'bg-blue-500/10 text-blue-600' : 'bg-orange-500/10 text-orange-600'}`}>
-                          {coupon.type === 'shipping' ? <Truck className="w-5 h-5" /> : <Tag className="w-5 h-5" />}
+
+                    <div className="border-t dark:border-gray-800 pt-4 mt-4">
+                      <div className="grid grid-cols-2 gap-4 text-xs">
+                        <div>
+                          <span className="text-gray-400 font-bold uppercase tracking-wider">Pagamento:</span>
+                          <div className="text-gray-600 dark:text-gray-300 font-medium mt-1">{order.paymentMethod}</div>
                         </div>
                         <div>
-                          <div className="font-black text-gray-800 dark:text-white text-xs tracking-widest flex items-center gap-2">
-                            {coupon.code}
-                            {coupon.type === 'shipping' && <span className="text-[8px] bg-blue-100 dark:bg-blue-900 text-blue-600 px-1.5 py-0.5 rounded-full uppercase">FRETE</span>}
-                          </div>
-                          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                            {coupon.isFreeShipping ? 'FRETE GRÁTIS' : `${coupon.discountPercent}% OFF`}
-                          </div>
+                          <span className="text-gray-400 font-bold uppercase tracking-wider">Endereço:</span>
+                          <div className="text-gray-600 dark:text-gray-300 font-medium mt-1">{order.shippingAddress}</div>
                         </div>
                       </div>
-                      <button
-                        onClick={() => handleDeleteCoupon(coupon.id)}
-                        className="p-2 text-gray-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
                     </div>
-                  ))}
-                </div>
-              </div>
+
+                    <div className="flex gap-2 mt-4">
+                      {order.status === 'pending' && (
+                        <button
+                          onClick={() => updateOrderStatus(order.id, 'processing')}
+                          className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all"
+                        >
+                          Processar Pedido
+                        </button>
+                      )}
+                      {order.status === 'processing' && (
+                        <button
+                          onClick={() => updateOrderStatus(order.id, 'shipped')}
+                          className="flex-1 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all"
+                        >
+                          Marcar como Enviado
+                        </button>
+                      )}
+                      {order.status === 'shipped' && (
+                        <button
+                          onClick={() => updateOrderStatus(order.id, 'delivered')}
+                          className="flex-1 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all"
+                        >
+                          Marcar como Entregue
+                        </button>
+                      )}
+                      {order.status !== 'cancelled' && order.status !== 'delivered' && (
+                        <button
+                          onClick={() => updateOrderStatus(order.id, 'cancelled')}
+                          className="flex-1 px-4 py-2 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 text-red-600 rounded-lg text-xs font-bold transition-all"
+                        >
+                          Cancelar
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
+          ) : (
+            <InventoryTab
+              products={products}
+              coupons={coupons}
+              editingStockProductId={editingStockProductId}
+              editingStockValue={editingStockValue}
+              setEditingStockValue={setEditingStockValue}
+              handleSaveStock={handleSaveStock}
+              handleCancelEditStock={handleCancelEditStock}
+              handleEditStock={handleEditStock}
+              handleDeleteProduct={handleDeleteProduct}
+              handleEditProduct={handleEditProduct}
+              handleDeleteCoupon={handleDeleteCoupon}
+            />
           )}
-        </div >
+        </div>
 
         {/* MODAL PRODUTO */}
         {
