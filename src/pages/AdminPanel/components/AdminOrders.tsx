@@ -90,51 +90,44 @@ const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, updateOrderStatus }) 
                                 </div>
 
                                 <div className="border-t dark:border-gray-800 pt-4 mt-4 mb-4">
-                                    <div className="grid grid-cols-2 gap-4 text-xs">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
                                         <div>
                                             <span className="text-gray-400 font-bold uppercase tracking-wider">Pagamento:</span>
                                             <div className="text-gray-600 dark:text-gray-300 font-medium mt-1 text-uppercase">{order.paymentMethod}</div>
+                                        </div>
+                                        <div>
+                                            <span className="text-gray-400 font-bold uppercase tracking-wider">Alterar Status:</span>
+                                            <div className="relative mt-1">
+                                                <select
+                                                    value={order.status}
+                                                    onChange={(e) => updateOrderStatus(order.id, e.target.value as Order['status'])}
+                                                    className={`
+                                                        w-full appearance-none px-3 py-2 pr-8 rounded-lg text-xs font-bold border outline-none cursor-pointer transition-all
+                                                        bg-${config.color}-50 dark:bg-${config.color}-900/20 
+                                                        text-${config.color}-700 dark:text-${config.color}-400
+                                                        border-${config.color}-200 dark:border-${config.color}-800
+                                                        hover:border-${config.color}-300 dark:hover:border-${config.color}-700
+                                                        focus:ring-2 focus:ring-${config.color}-500/20
+                                                    `}
+                                                >
+                                                    <option value="pending">Pedido Recebido</option>
+                                                    <option value="processing">Em Preparação</option>
+                                                    <option value="shipped">Em Transporte</option>
+                                                    <option value="delivered">Entregue</option>
+                                                    <option value="cancelled">Cancelado</option>
+                                                </select>
+                                                <div className={`absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-${config.color}-500`}>
+                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                                                    </svg>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div>
                                             <span className="text-gray-400 font-bold uppercase tracking-wider">Endereço:</span>
                                             <div className="text-gray-600 dark:text-gray-300 font-medium mt-1">{order.shippingAddress}</div>
                                         </div>
                                     </div>
-                                </div>
-
-                                <div className="flex flex-wrap gap-2">
-                                    {order.status === 'pending' && (
-                                        <button
-                                            onClick={() => updateOrderStatus(order.id, 'processing')}
-                                            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs font-bold transition-all"
-                                        >
-                                            Processar Pedido
-                                        </button>
-                                    )}
-                                    {order.status === 'processing' && (
-                                        <button
-                                            onClick={() => updateOrderStatus(order.id, 'shipped')}
-                                            className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-xs font-bold transition-all"
-                                        >
-                                            Marcar como Enviado
-                                        </button>
-                                    )}
-                                    {order.status === 'shipped' && (
-                                        <button
-                                            onClick={() => updateOrderStatus(order.id, 'delivered')}
-                                            className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-xs font-bold transition-all"
-                                        >
-                                            Marcar como Entregue
-                                        </button>
-                                    )}
-                                    {order.status !== 'cancelled' && order.status !== 'delivered' && (
-                                        <button
-                                            onClick={() => updateOrderStatus(order.id, 'cancelled')}
-                                            className="px-4 py-2 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 text-red-600 rounded-lg text-xs font-bold transition-all"
-                                        >
-                                            Cancelar
-                                        </button>
-                                    )}
                                 </div>
                             </div>
                         );
