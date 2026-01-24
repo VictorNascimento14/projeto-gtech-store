@@ -194,8 +194,9 @@ const Cart: React.FC = () => {
   };
 
   return (
-    <div className="bg-[#F9F8FE] dark:bg-gray-950 min-h-screen py-10 transition-colors">
-      <div className="container mx-auto px-4 lg:px-12">
+    <div className="w-full overflow-x-hidden">
+      <div className="bg-[#F9F8FE] dark:bg-gray-950 min-h-fit py-10 pb-16 transition-colors">
+        <div className="container mx-auto px-4 lg:px-12">
         {isEmpty ? (
           <div className="bg-white dark:bg-gray-900 rounded-3xl p-12 shadow-sm text-center flex flex-col items-center justify-center min-h-[400px] border border-transparent dark:border-gray-800">
             <div className="w-24 h-24 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center mb-6 text-gray-300 dark:text-gray-700">
@@ -507,6 +508,7 @@ const Cart: React.FC = () => {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 };
