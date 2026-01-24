@@ -16,7 +16,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { ProductProvider } from './contexts/ProductContext';
 
 import { AnimatePresence } from 'framer-motion';
-import PageTransition from '../components/PageTransition';
+import PageTransition from './components/PageTransition';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
