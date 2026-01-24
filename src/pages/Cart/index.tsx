@@ -7,10 +7,10 @@ import {
   CreditCard, QrCode, FileText, ChevronRight, Lock,
   ArrowRight, Check
 } from 'lucide-react';
-import { useCart } from '../contexts/CartContext';
-import { useProducts } from '../contexts/ProductContext';
-import { useAuth } from '../contexts/AuthContext';
-import { Coupon } from '../types';
+import { useCart } from '../../contexts/CartContext';
+import { useProducts } from '../../contexts/ProductContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { Coupon } from '../../types';
 
 const Cart: React.FC = () => {
   const navigate = useNavigate();

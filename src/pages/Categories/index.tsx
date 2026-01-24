@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import * as LucideIcons from 'lucide-react';
-import { CATEGORIES } from '../constants';
+import { CATEGORIES } from '../../constants';
 
 const Categories: React.FC = () => {
   return (

@@ -1,14 +1,12 @@
-
-<<<<<<< HEAD
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Star, CheckCircle, X, AlertCircle, ArrowRight, Send, MoreVertical, Edit2, Trash2, Flag, UserX, ThumbsUp, Upload, MessageCircle, Heart } from 'lucide-react';
-import { useProducts } from '../contexts/ProductContext';
-import { useCart } from '../contexts/CartContext';
-import { useAuth } from '../contexts/AuthContext';
-import { useFavorites } from '../contexts/FavoritesContext';
-import ProductCard from '../components/ProductCard';
-import CartModal from '../components/CartModal';
+import { useProducts } from '../../contexts/ProductContext';
+import { useCart } from '../../contexts/CartContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { useFavorites } from '../../contexts/FavoritesContext';
+import ProductCard from '../../components/ProductCard';
+import CartModal from '../../components/CartModal';
 
 // Interface para comentários
 interface Comment {
@@ -158,16 +156,6 @@ const productComments: Record<number, Comment[]> = {
     }
   ]
 };
-=======
-=======
-import React, { useState, useEffect, useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { Star, CheckCircle, X, AlertCircle, ArrowRight } from 'lucide-react';
-import { useProducts } from '../src/contexts/ProductContext';
-import { useCart } from '../src/contexts/CartContext';
->>>>>>> ee934d5 (feat: add ProductDetail and ProductListing pages for product display and navigation.)
-import ProductCard from '../src/components/ProductCard';
->>>>>>> f56a413 (refactor: migrate ProductCard component)
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();

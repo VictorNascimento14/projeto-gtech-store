@@ -28,10 +28,10 @@ import {
   Gift,
   Edit
 } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
-import { useProducts } from '../contexts/ProductContext';
-import { CATEGORIES } from '../constants';
-import { Product, Coupon, HeroSlide, Customer, Order } from '../types';
+import { useAuth } from '../../contexts/AuthContext';
+import { useProducts } from '../../contexts/ProductContext';
+import { CATEGORIES } from '../../constants';
+import { Product, Coupon, HeroSlide, Customer, Order } from '../../types';
 
 const AdminPanel: React.FC = () => {
   const { user, isLoggedIn } = useAuth();
