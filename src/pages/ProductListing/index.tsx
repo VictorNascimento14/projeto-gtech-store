@@ -2,9 +2,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SearchX, Filter } from 'lucide-react';
-import ProductCard from '../src/components/ProductCard';
-import { CATEGORIES } from '../src/constants';
-import { useProducts } from '../src/contexts/ProductContext';
+import ProductCard from '../../components/ProductCard';
+import { CATEGORIES } from '../../constants';
+import { useProducts } from '../../contexts/ProductContext';
 
 const ProductListing: React.FC = () => {
   const { products } = useProducts();
