@@ -6,12 +6,13 @@ import { CATEGORIES } from '../constants';
 
 const Categories: React.FC = () => {
   return (
-    <div className="bg-[#F9F8FE] dark:bg-gray-950 min-h-screen py-10 transition-colors">
-      <div className="container mx-auto px-4 lg:px-12">
-        <div className="mb-12 text-center lg:text-left">
-          <h1 className="text-4xl font-extrabold text-gray-800 dark:text-white mb-2">Categorias</h1>
-          <p className="text-gray-500 dark:text-gray-400 text-lg">Navegue por estilo e encontre o que você procura</p>
-        </div>
+    <div className="w-full overflow-x-hidden">
+      <div className="bg-[#F9F8FE] dark:bg-gray-950 min-h-fit py-10 pb-16 transition-colors">
+        <div className="container mx-auto px-4 lg:px-12">
+          <div className="mb-12 text-center lg:text-left">
+            <h1 className="text-4xl font-extrabold text-gray-800 dark:text-white mb-2">Categorias</h1>
+            <p className="text-gray-500 dark:text-gray-400 text-lg">Navegue por estilo e encontre o que você procura</p>
+          </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
           {CATEGORIES.map((cat, idx) => {
@@ -71,6 +72,7 @@ const Categories: React.FC = () => {
           <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
         </div>
       </div>
+    </div>
     </div>
   );
 };
