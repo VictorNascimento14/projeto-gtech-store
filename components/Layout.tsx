@@ -317,7 +317,6 @@ const Layout: React.FC = () => {
                         className="px-4 py-2 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary-hover transition-colors"
                         style={{ minWidth: '110px' }}
                         onClick={() => { setShowCartModal(false); navigate('/carrinho'); }}
-                        disabled={items.length === 0}
                       >
                         Ver Carrinho
                       </button>
