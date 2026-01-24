@@ -11,6 +11,7 @@ import Footer from '../Footer';
 import DarkModeToggle from '../DarkModeToggle';
 import Header from '../Header';
 import UserSidebar from '../UserSidebar';
+import Preloader from '../Preloader';
 
 
 const Layout: React.FC = () => {
@@ -25,6 +26,9 @@ const Layout: React.FC = () => {
   const [suggestions, setSuggestions] = useState<Product[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAppLoading, setIsAppLoading] = useState(() => {
+    return !sessionStorage.getItem('hasSeenPreloader');
+  });
 
   // Fecha o menu mobile quando a rota muda
   useEffect(() => {
@@ -62,6 +66,13 @@ const Layout: React.FC = () => {
     setSearchTerm('');
     setShowSuggestions(false);
   };
+
+  if (isAppLoading) {
+    return <Preloader onLoadComplete={() => {
+      setIsAppLoading(false);
+      sessionStorage.setItem('hasSeenPreloader', 'true');
+    }} />;
+  }
 
   return (
     <div className="flex flex-col min-h-screen dark:bg-gray-950">
