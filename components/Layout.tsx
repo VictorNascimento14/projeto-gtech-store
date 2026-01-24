@@ -1,10 +1,11 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Outlet, Link, NavLink, useNavigate } from 'react-router-dom';
-import { Search, ShoppingCart, User, Sun, Moon, LogOut, Package, ChevronDown, ArrowRight, Settings } from 'lucide-react';
+import { Search, ShoppingCart, User, Sun, Moon, LogOut, Package, ChevronDown, ArrowRight, Settings, Menu, X, Heart } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useProducts } from '../contexts/ProductContext';
+import { useFavorites } from '../contexts/FavoritesContext';
 import { Product } from '../types';
 
 const DarkModeToggle = () => {
@@ -65,14 +66,21 @@ const DarkModeToggle = () => {
 const Layout: React.FC = () => {
   const navigate = useNavigate();
   const { totalItems, items, clearCart, subtotal } = useCart();
-    const [showCartModal, setShowCartModal] = useState(false);
+  const [showCartModal, setShowCartModal] = useState(false);
   const { isLoggedIn, user, logout } = useAuth();
   const { products } = useProducts();
+  const { favorites } = useFavorites();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [suggestions, setSuggestions] = useState<Product[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+
+  // Fecha o menu mobile quando a rota muda
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [navigate]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
