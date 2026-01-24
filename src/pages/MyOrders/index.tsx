@@ -97,28 +97,7 @@ const MyOrders: React.FC = () => {
         <div className="space-y-6">
           {userOrders.map((order) => (
             <div key={order.id} className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm border border-transparent dark:border-gray-800 hover:border-primary/20 transition-all group">
-              <div className="flex flex-wrap justify-between items-start gap-4 mb-6 pb-6 border-b border-gray-50 dark:border-gray-800">
-                <div className="space-y-1">
-                  <div className="text-xs font-bold text-gray-400 uppercase tracking-tighter">Número do pedido</div>
-                  <div className="text-lg font-bold text-gray-800 dark:text-white group-hover:text-primary transition-colors">#{order.id}</div>
-                </div>
-                <div className="space-y-1">
-                  <div className="text-xs font-bold text-gray-400 uppercase tracking-tighter">Data da compra</div>
-                  <div className="text-sm font-medium text-gray-600 dark:text-gray-300">{new Date(order.createdAt).toLocaleDateString()}</div>
-                </div>
-                <div className="space-y-1">
-                  <div className="text-xs font-bold text-gray-400 uppercase tracking-tighter">Status</div>
-                  <div className={`text-[10px] font-bold text-white px-3 py-1 rounded-full uppercase tracking-widest ${getStatusColor(order.status)}`}>
-                    {getStatusText(order.status)}
-                  </div>
-                </div>
-                <div className="space-y-1 text-right ml-auto">
-                  <div className="text-xs font-bold text-gray-400 uppercase tracking-tighter">Total</div>
-                  <div className="text-xl font-black text-primary">R$ {order.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mb-6 pb-6 border-b border-gray-50 dark:border-gray-800">
                 <div className="flex items-center gap-4">
                   {order.items.slice(0, 3).map((item, idx) => (
                     <div key={idx} className="w-16 h-16 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center justify-center p-2 border border-gray-100 dark:border-gray-700">
@@ -137,9 +116,31 @@ const MyOrders: React.FC = () => {
                     <button className="text-xs text-primary font-bold hover:underline flex items-center gap-1">Ver detalhes <ChevronRight className="w-3 h-3" /></button>
                   </div>
                 </div>
+              </div>
+
+              <div className="flex flex-wrap justify-between items-center gap-4">
+                <div className="space-y-1">
+                  <div className="text-xs font-bold text-gray-400 uppercase tracking-tighter">Número do pedido</div>
+                  <div className="text-lg font-bold text-gray-800 dark:text-white group-hover:text-primary transition-colors">#{order.id}</div>
+                </div>
+                <div className="space-y-1">
+                  <div className="text-xs font-bold text-gray-400 uppercase tracking-tighter">Data da compra</div>
+                  <div className="text-sm font-medium text-gray-600 dark:text-gray-300">{new Date(order.createdAt).toLocaleDateString()}</div>
+                </div>
+                <div className="space-y-1">
+                  <div className="text-xs font-bold text-gray-400 uppercase tracking-tighter">Status</div>
+                  <div className={`text-[10px] font-bold text-white px-3 py-1 rounded-full uppercase tracking-widest ${getStatusColor(order.status)}`}>
+                    {getStatusText(order.status)}
+                  </div>
+                </div>
+                <div className="space-y-1 text-right">
+                  <div className="text-xs font-bold text-gray-400 uppercase tracking-tighter">Total</div>
+                  <div className="text-xl font-black text-primary">R$ {order.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                </div>
+
                 <Link
                   to={`/rastreio/${order.id}`}
-                  className="hidden sm:flex items-center gap-2 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 px-6 py-2 rounded-xl text-sm font-bold text-gray-600 dark:text-gray-300 transition-colors border border-gray-200 dark:border-gray-700"
+                  className="hidden sm:flex items-center gap-2 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 px-6 py-2 rounded-xl text-sm font-bold text-gray-600 dark:text-gray-300 transition-colors border border-gray-200 dark:border-gray-700 ml-auto"
                 >
                   <Truck className="w-5 h-5 text-primary" />
                   Rastrear Entrega
