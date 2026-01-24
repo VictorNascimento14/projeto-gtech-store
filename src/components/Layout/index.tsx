@@ -12,6 +12,7 @@ import DarkModeToggle from '../DarkModeToggle';
 import Header from '../Header';
 import UserSidebar from '../UserSidebar';
 import Preloader from '../Preloader';
+import { AnimatePresence, motion } from 'framer-motion';
 
 
 const Layout: React.FC = () => {
@@ -92,56 +93,66 @@ const Layout: React.FC = () => {
     setShowSuggestions(false);
   };
 
-  if (isAppLoading) {
-    return (
-      <Preloader
-        externalProgress={loadProgress}
-        onLoadComplete={() => {
-          setIsAppLoading(false);
-          sessionStorage.setItem('hasSeenPreloader', 'true');
-        }}
-      />
-    );
-  }
-
   return (
-    <div className="flex flex-col min-h-screen dark:bg-gray-950">
-      <DarkModeToggle />
+    <>
+      <AnimatePresence>
+        {isAppLoading && (
+          <motion.div
+            key="preloader"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
+            className="fixed inset-0 z-[10000]"
+          >
+            <Preloader
+              externalProgress={loadProgress}
+              onLoadComplete={() => {
+                setIsAppLoading(false);
+                sessionStorage.setItem('hasSeenPreloader', 'true');
+              }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      <Header
-        setIsMenuOpen={setIsMenuOpen}
-        isLoggedIn={isLoggedIn}
-        user={user}
-        logout={logout}
-        totalItems={totalItems}
-        products={products}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        suggestions={suggestions}
-        showSuggestions={showSuggestions}
-        setShowSuggestions={setShowSuggestions}
-        handleInputChange={handleInputChange}
-        handleSearch={handleSearch}
-        selectSuggestion={selectSuggestion}
-        showProfileMenu={showProfileMenu}
-        setShowProfileMenu={setShowProfileMenu}
-      />
+      <div className="flex flex-col min-h-screen dark:bg-gray-950">
+        <DarkModeToggle />
 
-      <UserSidebar
-        isMenuOpen={isMenuOpen}
-        setIsMenuOpen={setIsMenuOpen}
-        isLoggedIn={isLoggedIn}
-        user={user}
-        logout={logout}
-        totalItems={totalItems}
-      />
+        <Header
+          setIsMenuOpen={setIsMenuOpen}
+          isLoggedIn={isLoggedIn}
+          user={user}
+          logout={logout}
+          totalItems={totalItems}
+          products={products}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          suggestions={suggestions}
+          showSuggestions={showSuggestions}
+          setShowSuggestions={setShowSuggestions}
+          handleInputChange={handleInputChange}
+          handleSearch={handleSearch}
+          selectSuggestion={selectSuggestion}
+          showProfileMenu={showProfileMenu}
+          setShowProfileMenu={setShowProfileMenu}
+        />
 
-      <main className="flex-grow">
-        <Outlet />
-      </main>
+        <UserSidebar
+          isMenuOpen={isMenuOpen}
+          setIsMenuOpen={setIsMenuOpen}
+          isLoggedIn={isLoggedIn}
+          user={user}
+          logout={logout}
+          totalItems={totalItems}
+        />
 
-      <Footer />
-    </div>
+        <main className="flex-grow">
+          <Outlet />
+        </main>
+
+        <Footer />
+      </div>
+    </>
   );
 };
 
