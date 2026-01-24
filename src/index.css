@@ -1,3 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* Configuração da View Transition*/
 ::view-transition-old(root),
@@ -41,6 +44,7 @@
 html.transitioning * {
     transition: none !important;
 }
+
 html:not(.transitioning) {
     transition: background-color 0.2s ease, color 0.2s ease;
 }
