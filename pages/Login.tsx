@@ -7,21 +7,26 @@ import { ArrowLeft, Store, LogIn } from 'lucide-react';
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [credentialError, setCredentialError] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setCredentialError('');
 
     const { error } = await login(email, password);
 
     if (error) {
-      alert(error.message || 'Erro ao fazer login');
+      setCredentialError('E-mail ou senha incorretos. Verifique suas credenciais e tente novamente.');
       return;
     }
 
-    // Redireciona para home após login bem-sucedido
     navigate('/');
+  };
+
+  const clearError = () => {
+    if (credentialError) setCredentialError('');
   };
 
   return (
@@ -54,7 +59,7 @@ const Login: React.FC = () => {
                   <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">E-mail *</label>
                   <input
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => { setEmail(e.target.value); clearError(); }}
                     className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                     placeholder="seu@email.com"
                     type="email"
@@ -65,13 +70,19 @@ const Login: React.FC = () => {
                   <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Senha *</label>
                   <input
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => { setPassword(e.target.value); clearError(); }}
                     className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                     placeholder="Sua senha"
                     type="password"
                     required
                   />
                 </div>
+                {credentialError && (
+                  <div className="flex items-center gap-2 p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 text-red-700 dark:text-red-300 text-sm">
+                    <span className="flex-shrink-0 w-5 h-5 rounded-full bg-red-500/20 flex items-center justify-center text-red-500 font-bold" aria-hidden>!</span>
+                    <p>{credentialError}</p>
+                  </div>
+                )}
                 <button className="w-full bg-primary hover:bg-primary-hover text-white font-bold py-4 px-4 rounded-xl transition-all shadow-lg shadow-primary/30 flex items-center justify-center gap-2 transform active:scale-95" type="submit">
                   <LogIn className="w-5 h-5" />
                   Acessar Conta

@@ -1,11 +1,10 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Outlet, Link, NavLink, useNavigate } from 'react-router-dom';
-import { Search, ShoppingCart, User, Sun, Moon, LogOut, Package, ChevronDown, ArrowRight, Settings, Menu, X, Heart } from 'lucide-react';
+import { Search, ShoppingCart, User, Sun, Moon, LogOut, Package, ChevronDown, ArrowRight, Settings } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useProducts } from '../contexts/ProductContext';
-import { useFavorites } from '../contexts/FavoritesContext';
 import { Product } from '../types';
 
 const DarkModeToggle = () => {
@@ -56,9 +55,7 @@ const DarkModeToggle = () => {
   return (
     <button
       onClick={toggleTheme}
-      title={isDark ? "Mudar para modo claro" : "Mudar para modo escuro"}
-      aria-label={isDark ? "Ativar tema claro" : "Ativar tema escuro"}
-      className="fixed top-4 right-4 z-[100] w-9 h-9 rounded-full bg-white dark:bg-gray-800 shadow-xl flex items-center justify-center border border-gray-100 dark:border-gray-700 hover:scale-110 active:scale-95 transition-all text-gray-600 dark:text-yellow-400"
+      className="fixed top-4 right-4 z-[100] w-10 h-10 rounded-full bg-white dark:bg-gray-800 shadow-xl flex items-center justify-center border border-gray-100 dark:border-gray-700 hover:scale-110 active:scale-95 transition-all text-gray-600 dark:text-yellow-400"
     >
       {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
     </button>
@@ -71,18 +68,11 @@ const Layout: React.FC = () => {
     const [showCartModal, setShowCartModal] = useState(false);
   const { isLoggedIn, user, logout } = useAuth();
   const { products } = useProducts();
-  const { favorites } = useFavorites();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [suggestions, setSuggestions] = useState<Product[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
-
-  // Fecha o menu mobile quando a rota muda
-  useEffect(() => {
-    setIsMenuOpen(false);
-  }, [navigate]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -138,23 +128,9 @@ const Layout: React.FC = () => {
 
       <header className="bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-50 transition-colors">
         <div className="container mx-auto px-4 lg:px-12 py-6 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8">
-          <div className="w-full md:w-auto flex items-center justify-between md:justify-start gap-4 flex-shrink-0">
-            {/* Menu Hambúrguer - Mobile Only - Extrema Esquerda */}
-            <button
-              onClick={() => setIsMenuOpen(true)}
-              className="md:hidden p-2 text-primary bg-white dark:bg-gray-900 border-2 border-primary/20 hover:border-primary rounded-xl shadow-lg shadow-primary/5 transition-all active:scale-95"
-              aria-label="Abrir menu"
-            >
-              <Menu className="w-6 h-6" />
-            </button>
-
-            <Link to="/" className="flex items-center gap-2 md:mx-0 mx-auto">
-              <img src="../public/assets/logo-header.svg" alt="logo da página" className="h-7 md:h-auto" />
-            </Link>
-
-            {/* Espaçador invisível para manter o logo centralizado no mobile */}
-            <div className="w-10 md:hidden" />
-          </div>
+          <Link to="/" className="flex items-center gap-2 flex-shrink-0">
+            <img src="../public/assets/logo-header.svg" alt="logo da página" />
+          </Link>
 
           <div className="flex-grow max-w-xl w-full relative" ref={searchRef}>
             <form onSubmit={handleSearch} className="relative z-50">
@@ -183,8 +159,8 @@ const Layout: React.FC = () => {
                         onClick={() => selectSuggestion(product.id)}
                         className="w-full flex items-center gap-4 p-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-left group"
                       >
-                        <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center p-1 flex-shrink-0 overflow-hidden">
-                          <img src={product.image} alt={product.name} className="w-full h-full object-cover object-center mix-blend-multiply dark:mix-blend-normal" />
+                        <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center p-1 flex-shrink-0">
+                          <img src={product.image} alt={product.name} className="max-w-full max-h-full object-contain mix-blend-multiply dark:mix-blend-normal" />
                         </div>
                         <div className="flex-grow min-w-0">
                           <h4 className="text-sm font-bold text-gray-800 dark:text-white truncate group-hover:text-primary transition-colors">{product.name}</h4>
@@ -199,7 +175,7 @@ const Layout: React.FC = () => {
             )}
           </div>
 
-          <div className="hidden md:flex items-center gap-6 flex-shrink-0 relative">
+          <div className="flex items-center gap-6 flex-shrink-0 relative">
             {!isLoggedIn ? (
               <>
                 <Link to="/signup" className="text-gray-500 dark:text-gray-400 hover:underline text-sm font-medium">Cadastre-se</Link>
@@ -232,7 +208,7 @@ const Layout: React.FC = () => {
                         className="flex items-center gap-3 px-4 py-3 text-sm text-primary hover:bg-primary/5 transition-colors font-bold"
                       >
                         <Settings className="w-4 h-4" />
-                        Painel Administrativo
+                        Painel Admin
                       </Link>
                     )}
                     <Link
@@ -242,16 +218,6 @@ const Layout: React.FC = () => {
                     >
                       <Package className="w-4 h-4 text-primary" />
                       Meus Pedidos
-                    </Link>
-                    <Link
-                      to="/favoritos"
-                      onClick={() => setShowProfileMenu(false)}
-                      title="Ver favoritos"
-                      aria-label="Ir para página de favoritos"
-                      className="flex items-center gap-3 px-4 py-3 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                    >
-                      <Heart className="w-4 h-4 text-red-500" aria-hidden="true" />
-                      Favoritos
                     </Link>
                     <button
                       onClick={() => { logout(); setShowProfileMenu(false); }}
@@ -343,7 +309,7 @@ const Layout: React.FC = () => {
           </div>
         </div>
 
-        <nav className="hidden md:block container mx-auto px-4 lg:px-12 pb-0 pt-2 border-t border-gray-50 dark:border-gray-800/20">
+        <nav className="container mx-auto px-4 lg:px-12 pb-0 pt-2 border-t border-gray-50 dark:border-gray-800/20">
           <ul className="flex items-center gap-10 overflow-x-auto hide-scrollbar py-2">
             <li><NavLink to="/" className={navLinkClasses}>Home</NavLink></li>
             <li><NavLink to="/produtos" className={navLinkClasses}>Produtos</NavLink></li>
@@ -375,36 +341,17 @@ const Layout: React.FC = () => {
 
               {/* Área com scroll */}
               <div className="flex-1 overflow-y-auto px-6 pb-6">
-                <div className="mb-6">
-                  <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Minha Loja</h3>
-                  
-                  {/* Ícones de Carrinho e Perfil */}
-                  <div className="flex items-center gap-4">
-                    {/* Cart Mobile */}
-                    <Link to="/carrinho" onClick={() => setIsMenuOpen(false)} className="relative text-primary p-2 bg-primary/5 rounded-xl border border-primary/10">
-                      <ShoppingCart className="w-6 h-6" />
-                      {totalItems > 0 && (
-                        <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full ring-2 ring-white dark:ring-gray-900">
-                          {totalItems}
-                        </span>
-                      )}
-                    </Link>
-
-                    {/* Profile Mobile */}
-                    {isLoggedIn ? (
-                      <div className="flex items-center gap-2 p-2 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
-                        <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center text-primary flex-shrink-0">
-                          <User className="w-3.5 h-3.5" />
-                        </div>
-                        <span className="text-sm font-bold text-gray-700 dark:text-gray-200 truncate max-w-[100px]">{user?.name?.split(' ')[0]}</span>
+                {/* Perfil do usuário */}
+                {isLoggedIn && (
+                  <div className="mb-6">
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
+                      <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-primary flex-shrink-0">
+                        <User className="w-4 h-4" />
                       </div>
-                    ) : (
-                      <div className="p-2 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
-                        <User className="w-6 h-6 text-gray-400" />
-                      </div>
-                    )}
+                      <span className="text-sm font-bold text-gray-700 dark:text-gray-200 truncate">{user?.name?.split(' ')[0]}</span>
+                    </div>
                   </div>
-                </div>
+                )}
 
               <div className="mb-6">
                 <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Navegação</h3>
@@ -413,6 +360,12 @@ const Layout: React.FC = () => {
                   <NavLink to="/produtos" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => `text-base font-bold transition-colors ${isActive ? 'text-primary' : 'text-gray-700 dark:text-gray-200'}`}>Produtos</NavLink>
                   <NavLink to="/categorias" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => `text-base font-bold transition-colors ${isActive ? 'text-primary' : 'text-gray-700 dark:text-gray-200'}`}>Categorias</NavLink>
                   <NavLink to="/meus-pedidos" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => `text-base font-bold transition-colors ${isActive ? 'text-primary' : 'text-gray-700 dark:text-gray-200'}`}>Meus Pedidos</NavLink>
+                  <NavLink to="/carrinho" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => `text-base font-bold transition-colors flex items-center gap-2 ${isActive ? 'text-primary' : 'text-gray-700 dark:text-gray-200'}`}>
+                    Carrinho
+                    {totalItems > 0 && (
+                      <span className="text-xs bg-primary text-white px-1.5 py-0.5 rounded-full">{totalItems}</span>
+                    )}
+                  </NavLink>
                 </nav>
               </div>
 
@@ -435,13 +388,15 @@ const Layout: React.FC = () => {
                 </div>
               )}
 
+              </div>
+
+              {/* Botões Entrar/Cadastrar fixos no bottom */}
               {!isLoggedIn && (
-                <div className="pt-6 border-t border-gray-100 dark:border-gray-800 flex flex-col gap-3">
+                <div className="px-6 py-4 border-t border-gray-100 dark:border-gray-800 flex flex-col gap-3 bg-white dark:bg-gray-900">
                   <Link to="/login" onClick={() => setIsMenuOpen(false)} className="w-full bg-primary text-white text-center py-3 rounded-lg font-bold shadow-lg shadow-primary/30">Entrar</Link>
                   <Link to="/signup" onClick={() => setIsMenuOpen(false)} className="w-full bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-center py-3 rounded-lg font-bold">Cadastre-se</Link>
                 </div>
               )}
-              </div>
             </div>
           </>
         )}
@@ -450,6 +405,22 @@ const Layout: React.FC = () => {
       <main className="flex-grow">
         <Outlet />
       </main>
+
+      {/* Carrinho Flutuante Mobile - Apenas para usuários logados */}
+      {isLoggedIn && (
+        <button
+          onClick={() => navigate('/carrinho')}
+          className="md:hidden fixed bottom-6 left-6 z-50 w-12 h-12 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-full shadow-lg border border-gray-200/50 dark:border-gray-700/50 flex items-center justify-center text-primary hover:bg-white dark:hover:bg-gray-800 transition-colors animate-float-subtle"
+          aria-label="Ver carrinho"
+        >
+          <ShoppingCart className="w-5 h-5" />
+          {totalItems > 0 && (
+            <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center ring-2 ring-white dark:ring-gray-800">
+              {totalItems > 9 ? '9+' : totalItems}
+            </span>
+          )}
+        </button>
+      )}
 
       <footer className="bg-dark-footer text-white py-16">
         <div className="container mx-auto px-4 lg:px-12">
