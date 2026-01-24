@@ -2,8 +2,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Star, CheckCircle, X, AlertCircle, ArrowRight } from 'lucide-react';
-import { useProducts } from '../contexts/ProductContext';
-import { useCart } from '../contexts/CartContext';
+import { useProducts } from '../src/contexts/ProductContext';
+import { useCart } from '../src/contexts/CartContext';
 import ProductCard from '../src/components/ProductCard';
 
 const ProductDetail: React.FC = () => {
