@@ -6,7 +6,8 @@ import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useProducts } from '../contexts/ProductContext';
 import { useFavorites } from '../contexts/FavoritesContext';
-import { Product } from '../types';
+import { Product } from '../src/types';
+import Logo from '../src/components/Logo';
 
 const DarkModeToggle = () => {
   const [isDark, setIsDark] = useState(false);
@@ -154,9 +155,7 @@ const Layout: React.FC = () => {
               <Menu className="w-6 h-6" />
             </button>
 
-            <Link to="/" className="flex items-center gap-2 md:mx-0 mx-auto">
-              <img src="/assets/logo-header.svg" alt="logo da página" className="h-7 md:h-auto" />
-            </Link>
+            <Logo variant="header" className="md:mx-0 mx-auto" />
 
             {/* Espaçador invisível para manter o logo centralizado no mobile */}
             <div className="w-10 md:hidden" />
@@ -333,8 +332,8 @@ const Layout: React.FC = () => {
                 </>
               )}
             </div>
-                {/* Modal do Carrinho */}
-                {/* O modal global foi removido, agora é dropdown no ícone do carrinho */}
+            {/* Modal do Carrinho */}
+            {/* O modal global foi removido, agora é dropdown no ícone do carrinho */}
           </div>
         </div>
 
@@ -357,9 +356,9 @@ const Layout: React.FC = () => {
             />
 
             {/* Sidebar */}
-            <div className="fixed top-0 left-0 h-full w-[280px] bg-white dark:bg-gray-900 z-[101] md:hidden shadow-2xl animate-in slide-in-from-left duration-300 flex flex-col">
-              <div className="flex items-center justify-between p-6 pb-0 mb-6">
-                <img src="../public/assets/logo-header.svg" alt="Digital Store" className="h-6" />
+            <div className="fixed top-0 left-0 h-full w-[280px] bg-white dark:bg-gray-900 z-[101] md:hidden p-6 shadow-2xl animate-in slide-in-from-left duration-300">
+              <div className="flex items-center justify-between mb-8">
+                <Logo variant="header" className="h-6" />
                 <button
                   onClick={() => setIsMenuOpen(false)}
                   className="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
@@ -382,40 +381,40 @@ const Layout: React.FC = () => {
                   </div>
                 )}
 
-              <div className="mb-6">
-                <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Navegação</h3>
-                <nav className="flex flex-col gap-4">
-                  <NavLink to="/" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => `text-base font-bold transition-colors ${isActive ? 'text-primary' : 'text-gray-700 dark:text-gray-200'}`}>Home</NavLink>
-                  <NavLink to="/produtos" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => `text-base font-bold transition-colors ${isActive ? 'text-primary' : 'text-gray-700 dark:text-gray-200'}`}>Produtos</NavLink>
-                  <NavLink to="/categorias" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => `text-base font-bold transition-colors ${isActive ? 'text-primary' : 'text-gray-700 dark:text-gray-200'}`}>Categorias</NavLink>
-                  <NavLink to="/meus-pedidos" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => `text-base font-bold transition-colors ${isActive ? 'text-primary' : 'text-gray-700 dark:text-gray-200'}`}>Meus Pedidos</NavLink>
-                  <NavLink to="/carrinho" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => `text-base font-bold transition-colors flex items-center gap-2 ${isActive ? 'text-primary' : 'text-gray-700 dark:text-gray-200'}`}>
-                    Carrinho
-                    {totalItems > 0 && (
-                      <span className="text-xs bg-primary text-white px-1.5 py-0.5 rounded-full">{totalItems}</span>
-                    )}
-                  </NavLink>
-                </nav>
-              </div>
-
-              {isLoggedIn && (
-                <div className="mb-6 pt-6 border-t border-gray-100 dark:border-gray-800">
-                  <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Opções da Conta</h3>
-                  <div className="flex flex-col gap-4">
-                    {user?.role === 'admin' && (
-                      <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 text-sm font-bold text-primary">
-                        <Settings className="w-4 h-4" /> Painel Admin
-                      </Link>
-                    )}
-                    <Link to="/favoritos" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 text-sm font-bold text-gray-700 dark:text-gray-200">
-                      <Heart className="w-4 h-4 text-red-500" /> Favoritos {favorites.length > 0 && <span className="text-xs text-gray-400">({favorites.length})</span>}
-                    </Link>
-                    <button onClick={() => { logout(); setIsMenuOpen(false); }} className="flex items-center gap-3 text-sm font-bold text-red-500">
-                      <LogOut className="w-4 h-4" /> Sair da Conta
-                    </button>
-                  </div>
+                <div className="mb-6">
+                  <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Navegação</h3>
+                  <nav className="flex flex-col gap-4">
+                    <NavLink to="/" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => `text-base font-bold transition-colors ${isActive ? 'text-primary' : 'text-gray-700 dark:text-gray-200'}`}>Home</NavLink>
+                    <NavLink to="/produtos" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => `text-base font-bold transition-colors ${isActive ? 'text-primary' : 'text-gray-700 dark:text-gray-200'}`}>Produtos</NavLink>
+                    <NavLink to="/categorias" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => `text-base font-bold transition-colors ${isActive ? 'text-primary' : 'text-gray-700 dark:text-gray-200'}`}>Categorias</NavLink>
+                    <NavLink to="/meus-pedidos" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => `text-base font-bold transition-colors ${isActive ? 'text-primary' : 'text-gray-700 dark:text-gray-200'}`}>Meus Pedidos</NavLink>
+                    <NavLink to="/carrinho" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => `text-base font-bold transition-colors flex items-center gap-2 ${isActive ? 'text-primary' : 'text-gray-700 dark:text-gray-200'}`}>
+                      Carrinho
+                      {totalItems > 0 && (
+                        <span className="text-xs bg-primary text-white px-1.5 py-0.5 rounded-full">{totalItems}</span>
+                      )}
+                    </NavLink>
+                  </nav>
                 </div>
-              )}
+
+                {isLoggedIn && (
+                  <div className="mb-6 pt-6 border-t border-gray-100 dark:border-gray-800">
+                    <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Opções da Conta</h3>
+                    <div className="flex flex-col gap-4">
+                      {user?.role === 'admin' && (
+                        <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 text-sm font-bold text-primary">
+                          <Settings className="w-4 h-4" /> Painel Admin
+                        </Link>
+                      )}
+                      <Link to="/favoritos" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 text-sm font-bold text-gray-700 dark:text-gray-200">
+                        <Heart className="w-4 h-4 text-red-500" /> Favoritos {favorites.length > 0 && <span className="text-xs text-gray-400">({favorites.length})</span>}
+                      </Link>
+                      <button onClick={() => { logout(); setIsMenuOpen(false); }} className="flex items-center gap-3 text-sm font-bold text-red-500">
+                        <LogOut className="w-4 h-4" /> Sair da Conta
+                      </button>
+                    </div>
+                  </div>
+                )}
 
               </div>
 
@@ -455,11 +454,8 @@ const Layout: React.FC = () => {
         <div className="container mx-auto px-4 lg:px-12">
           {/* Main Footer Content */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-            {/* Logo and Description */}
             <div className="space-y-6">
-              <div className="flex items-center gap-2">
-                <img src="../public/assets/logo-footer.svg" alt="Digital Store" className="h-8" />
-              </div>
+              <Logo variant="footer" />
               <p className="text-sm text-gray-400 leading-relaxed">
                 Na Digital Store você encontra a melhor qualidade e preços acessíveis para você. <br />
                 Temos uma ampla variedade de produtos para atender às suas necessidades. <br />
