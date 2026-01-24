@@ -7,7 +7,7 @@ import * as LucideIcons from 'lucide-react';
 import gsap from 'gsap';
 import * as THREE from 'three';
 import ProductCard from '../components/ProductCard';
-import Preloader from '../components/Preloader';
+import Preloader from '../src/components/Preloader';
 import { CATEGORIES } from '../constants';
 import { useProducts } from '../contexts/ProductContext';
 
