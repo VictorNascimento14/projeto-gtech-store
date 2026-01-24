@@ -428,7 +428,8 @@ const AdminPanel: React.FC = () => {
   };
 
   return (
-    <div className="min-h-fit bg-[#F9F8FE] dark:bg-gray-950 transition-colors relative">
+    <div className="w-full overflow-x-hidden">
+    <div className="min-h-fit bg-[#F9F8FE] dark:bg-gray-950 transition-colors relative pb-8">
       {toast && (
         <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[200] animate-in slide-in-from-top-4 duration-300">
           <div className="bg-white dark:bg-gray-800 shadow-2xl rounded-2xl py-3 px-6 flex items-center gap-3 border border-gray-100 dark:border-gray-700">
@@ -448,34 +449,37 @@ const AdminPanel: React.FC = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-6 lg:px-12 py-6 lg:py-8">
+      <div className="container mx-auto px-4 lg:px-12 py-6 lg:py-8">
         {/* Barra de navegação das abas + Botões de ação */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-8">
           {/* Abas de navegação */}
-          <div className="flex items-center bg-white dark:bg-gray-900 p-1.5 rounded-2xl shadow-sm border dark:border-gray-800">
+          <div className="w-full lg:w-auto overflow-x-auto pb-2 lg:pb-0 -mx-1 px-1 hide-scrollbar">
+            <div className="flex items-center bg-white dark:bg-gray-900 p-1.5 rounded-2xl shadow-sm border dark:border-gray-800 min-w-max">
             <button
               onClick={() => setActiveTab('inventory')}
               title="Ir para inventário"
               aria-label="Aba de inventário e produtos"
-              className={`flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all ${activeTab === 'inventory' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'}`}
+              className={`flex items-center gap-1.5 px-3 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all whitespace-nowrap ${activeTab === 'inventory' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'}`}
             >
               <Box className="w-4 h-4" aria-hidden="true" />
-              Inventário
+              <span className="hidden sm:inline">Inventário</span>
+              <span className="sm:hidden">Inv.</span>
             </button>
             <button
               onClick={() => setActiveTab('dashboard')}
               title="Ir para dashboard"
               aria-label="Aba de análises e métricas"
-              className={`flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all ${activeTab === 'dashboard' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'}`}
+              className={`flex items-center gap-1.5 px-3 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all whitespace-nowrap ${activeTab === 'dashboard' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'}`}
             >
               <LayoutDashboard className="w-4 h-4" aria-hidden="true" />
-              Dashboard
+              <span className="hidden sm:inline">Dashboard</span>
+              <span className="sm:hidden">Dash</span>
             </button>
             <button
               onClick={() => setActiveTab('hero')}
               title="Ir para slides hero"
               aria-label="Aba de banners e slides principais"
-              className={`flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all ${activeTab === 'hero' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'}`}
+              className={`flex items-center gap-1.5 px-3 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all whitespace-nowrap ${activeTab === 'hero' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'}`}
             >
               <ImageIcon className="w-4 h-4" aria-hidden="true" />
               Hero
@@ -484,20 +488,23 @@ const AdminPanel: React.FC = () => {
               onClick={() => setActiveTab('customers')}
               title="Ir para clientes"
               aria-label="Aba de gerenciamento de clientes"
-              className={`flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all ${activeTab === 'customers' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'}`}
+              className={`flex items-center gap-1.5 px-3 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all whitespace-nowrap ${activeTab === 'customers' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'}`}
             >
               <Users className="w-4 h-4" aria-hidden="true" />
-              Clientes
+              <span className="hidden sm:inline">Clientes</span>
+              <span className="sm:hidden">Cli.</span>
             </button>
             <button
               onClick={() => setActiveTab('orders')}
               title="Ir para pedidos"
               aria-label="Aba de gerenciamento de pedidos"
-              className={`flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all ${activeTab === 'orders' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'}`}
+              className={`flex items-center gap-1.5 px-3 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all whitespace-nowrap ${activeTab === 'orders' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'}`}
             >
               <ShoppingBag className="w-4 h-4" aria-hidden="true" />
-              Pedidos
+              <span className="hidden sm:inline">Pedidos</span>
+              <span className="sm:hidden">Ped.</span>
             </button>
+            </div>
           </div>
 
           {/* Botões de ação */}
@@ -1455,7 +1462,8 @@ const AdminPanel: React.FC = () => {
           </div>
         )
       }
-    </div >
+    </div>
+    </div>
   );
 };
 

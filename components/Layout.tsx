@@ -76,6 +76,8 @@ const Layout: React.FC = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+  const cartRef = useRef<HTMLDivElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
 
   // Fecha o menu mobile quando a rota muda
   useEffect(() => {
@@ -86,6 +88,12 @@ const Layout: React.FC = () => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         setShowSuggestions(false);
+      }
+      if (cartRef.current && !cartRef.current.contains(event.target as Node)) {
+        setShowCartModal(false);
+      }
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setShowProfileMenu(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -209,9 +217,9 @@ const Layout: React.FC = () => {
                 </Link>
               </>
             ) : (
-              <div className="relative">
+              <div className="relative" ref={profileRef}>
                 <button
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                  onClick={() => { setShowCartModal(false); setShowProfileMenu(!showProfileMenu); }}
                   className="flex items-center gap-2 group"
                 >
                   <div className="w-9 h-9 bg-primary/10 rounded-full flex items-center justify-center text-primary border border-primary/20 group-hover:bg-primary group-hover:text-white transition-all">
@@ -253,11 +261,11 @@ const Layout: React.FC = () => {
               </div>
             )}
 
-            <div className="relative">
+            <div className="relative" ref={cartRef}>
               <button
                 type="button"
                 className="relative text-primary hover:text-primary-hover transition-colors ml-2"
-                onClick={() => setShowCartModal((v) => !v)}
+                onClick={() => { setShowProfileMenu(false); setShowCartModal((v) => !v); }}
               >
                 <ShoppingCart className="w-6 h-6" />
                 {totalItems > 0 && (
@@ -317,7 +325,6 @@ const Layout: React.FC = () => {
                         className="px-4 py-2 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary-hover transition-colors"
                         style={{ minWidth: '110px' }}
                         onClick={() => { setShowCartModal(false); navigate('/carrinho'); }}
-                        disabled={items.length === 0}
                       >
                         Ver Carrinho
                       </button>

@@ -313,7 +313,7 @@ const Home: React.FC = () => {
 
   if (!currentSlide) {
     return (
-      <div className="min-h-screen flex items-center justify-center dark:bg-gray-950">
+      <div className="min-h-[50vh] flex items-center justify-center dark:bg-gray-950">
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
       </div>
     );
@@ -354,7 +354,7 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="transition-colors">
+    <div className="w-full overflow-x-hidden transition-colors">
       {/* Hero Carrossel */}
       <section className={`${currentSlide.bgColor} ${currentSlide.bgDark} py-20 lg:py-24 relative overflow-hidden transition-colors duration-500`}>
         {/* Decoração de fundo com pontinhos */}

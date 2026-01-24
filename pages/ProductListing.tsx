@@ -64,14 +64,15 @@ const ProductListing: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 lg:px-12 dark:bg-gray-950 min-h-screen">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-        <div className="text-sm">
-          <span className="font-bold text-gray-700 dark:text-gray-200">
-            {searchFilter ? `Resultados para "${searchFilter}"` : 'Todos os produtos'}
-          </span>
-          <span className="text-gray-400"> - {filteredProducts.length} produtos</span>
-        </div>
+    <div className="w-full overflow-x-hidden">
+      <div className="container mx-auto px-4 py-8 lg:px-12 dark:bg-gray-950 min-h-fit pb-12">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+          <div className="text-sm">
+            <span className="font-bold text-gray-700 dark:text-gray-200">
+              {searchFilter ? `Resultados para "${searchFilter}"` : 'Todos os produtos'}
+            </span>
+            <span className="text-gray-400"> - {filteredProducts.length} produtos</span>
+          </div>
         
         <div className="flex items-center border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 bg-white dark:bg-gray-900 shadow-sm">
           <span className="font-bold text-xs mr-2 whitespace-nowrap text-gray-500 uppercase tracking-tighter">Ordenar por:</span>
@@ -145,6 +146,7 @@ const ProductListing: React.FC = () => {
             </div>
           )}
         </div>
+      </div>
       </div>
     </div>
   );

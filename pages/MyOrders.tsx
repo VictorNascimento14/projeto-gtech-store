@@ -354,35 +354,38 @@ const MyOrders: React.FC = () => {
 
   if (!isLoggedIn) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center p-4 text-center bg-[#F9F8FE] dark:bg-gray-950 transition-colors">
-        <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mb-6 animate-pulse text-primary">
-          <Lock className="w-12 h-12" />
-        </div>
-        <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-4">Acesso Restrito</h2>
-        <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-md">
-          Para visualizar seus pedidos e acompanhar suas entregas, você precisa estar conectado à sua conta.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Link
-            to="/login"
-            className="bg-primary hover:bg-primary-hover text-white font-bold py-3 px-12 rounded-xl transition-all shadow-lg shadow-primary/30 uppercase text-sm tracking-widest"
-          >
-            Fazer Login
-          </Link>
-          <Link
-            to="/signup"
-            className="bg-white dark:bg-gray-900 text-primary border border-primary font-bold py-3 px-12 rounded-xl hover:bg-primary/5 transition-all uppercase text-sm tracking-widest"
-          >
-            Criar Conta
-          </Link>
+      <div className="w-full overflow-x-hidden">
+        <div className="min-h-[50vh] flex flex-col items-center justify-center p-4 text-center bg-[#F9F8FE] dark:bg-gray-950 transition-colors">
+          <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mb-6 animate-pulse text-primary">
+            <Lock className="w-12 h-12" />
+          </div>
+          <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-4">Acesso Restrito</h2>
+          <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-md">
+            Para visualizar seus pedidos e acompanhar suas entregas, você precisa estar conectado à sua conta.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Link
+              to="/login"
+              className="bg-primary hover:bg-primary-hover text-white font-bold py-3 px-12 rounded-xl transition-all shadow-lg shadow-primary/30 uppercase text-sm tracking-widest"
+            >
+              Fazer Login
+            </Link>
+            <Link
+              to="/signup"
+              className="bg-white dark:bg-gray-900 text-primary border border-primary font-bold py-3 px-12 rounded-xl hover:bg-primary/5 transition-all uppercase text-sm tracking-widest"
+            >
+              Criar Conta
+            </Link>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-[#F9F8FE] dark:bg-gray-950 min-h-screen py-10 transition-colors">
-      <div className="container mx-auto px-4 lg:px-12">
+    <div className="w-full overflow-x-hidden">
+      <div className="bg-[#F9F8FE] dark:bg-gray-950 min-h-fit py-10 pb-16 transition-colors">
+        <div className="container mx-auto px-4 lg:px-12">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Meus Pedidos</h1>
@@ -1399,6 +1402,7 @@ const MyOrders: React.FC = () => {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 };
