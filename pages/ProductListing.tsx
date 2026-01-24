@@ -78,11 +78,11 @@ const ProductListing: React.FC = () => {
           <select 
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="bg-transparent border-none text-sm p-0 pr-8 focus:ring-0 cursor-pointer dark:text-white font-medium"
+            className="bg-transparent border-none text-sm p-0 pr-8 focus:ring-0 cursor-pointer text-gray-900 dark:text-white font-medium"
           >
-            <option value="relevantes">Relevância</option>
-            <option value="menor">Menor Preço</option>
-            <option value="maior">Maior Preço</option>
+            <option value="relevantes" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">Relevância</option>
+            <option value="menor" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">Menor Preço</option>
+            <option value="maior" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">Maior Preço</option>
           </select>
         </div>
       </div>

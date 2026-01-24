@@ -16,14 +16,14 @@ export const Favorites = () => {
 
   if (favorites.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 py-12">
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-slate-900 dark:to-slate-800 py-12">
         <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold text-white mb-8">Meus Favoritos</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Meus Favoritos</h1>
           
-          <div className="flex flex-col items-center justify-center bg-slate-800 rounded-lg p-12">
+          <div className="flex flex-col items-center justify-center bg-white dark:bg-slate-800 rounded-lg p-12 shadow-lg dark:shadow-none border border-gray-200 dark:border-transparent">
             <Heart className="w-16 h-16 text-red-500 mb-4 opacity-50" />
-            <h2 className="text-2xl font-semibold text-white mb-2">Nenhum favorito ainda</h2>
-            <p className="text-gray-400 text-center mb-6">
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">Nenhum favorito ainda</h2>
+            <p className="text-gray-600 dark:text-gray-400 text-center mb-6">
               Clique no ícone de coração em qualquer produto para adicioná-lo aos seus favoritos
             </p>
             <button
@@ -39,9 +39,9 @@ export const Favorites = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 py-12">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-slate-900 dark:to-slate-800 py-12">
       <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-bold text-white mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
           Meus Favoritos ({favorites.length})
         </h1>
 
@@ -49,10 +49,10 @@ export const Favorites = () => {
           {favorites.map(({ product }) => (
             <div
               key={product.id}
-              className="bg-slate-800 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300"
+              className="bg-white dark:bg-slate-800 rounded-lg overflow-hidden hover:shadow-xl dark:hover:shadow-lg shadow-md dark:shadow-none transition-shadow duration-300 border border-gray-200 dark:border-transparent"
             >
               {/* Product Image */}
-              <div className="relative h-64 bg-slate-700 cursor-pointer group overflow-hidden">
+              <div className="relative h-64 bg-gray-100 dark:bg-slate-700 cursor-pointer group overflow-hidden">
                 {product.image ? (
                   <img
                     src={product.image}
@@ -61,8 +61,8 @@ export const Favorites = () => {
                     onClick={() => handleNavigateToProduct(product.id)}
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-700 to-slate-800">
-                    <span className="text-gray-400">Imagem não disponível</span>
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 dark:from-slate-700 dark:to-slate-800">
+                    <span className="text-gray-500 dark:text-gray-400">Imagem não disponível</span>
                   </div>
                 )}
 
@@ -89,12 +89,12 @@ export const Favorites = () => {
 
               {/* Product Info */}
               <div className="p-4">
-                <h3 className="text-lg font-semibold text-white mb-2 line-clamp-2">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
                   {product.name}
                 </h3>
 
                 {product.description && (
-                  <p className="text-gray-400 text-sm mb-3 line-clamp-2">
+                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-3 line-clamp-2">
                     {product.description}
                   </p>
                 )}
@@ -114,11 +114,11 @@ export const Favorites = () => {
 
                   <div className="text-right">
                     {product.stock > 0 ? (
-                      <p className="text-green-400 font-semibold text-sm">
+                      <p className="text-green-600 dark:text-green-400 font-semibold text-sm">
                         {product.stock} em estoque
                       </p>
                     ) : (
-                      <p className="text-red-400 font-semibold text-sm">
+                      <p className="text-red-500 dark:text-red-400 font-semibold text-sm">
                         Indisponível
                       </p>
                     )}
@@ -128,7 +128,7 @@ export const Favorites = () => {
                 {/* Action Buttons */}
                 <button
                   onClick={() => handleNavigateToProduct(product.id)}
-                  className="w-full px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold transition-colors mb-2"
+                  className="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-900 dark:text-white rounded-lg font-semibold transition-colors mb-2"
                   title="Ver detalhes do produto"
                 >
                   Ver Detalhes
@@ -141,7 +141,7 @@ export const Favorites = () => {
                   aria-label={`Remover ${product.name} dos favoritos`}
                 >
                   <Trash2 size={18} />
-                  Remover
+                  Remover dos favoritos
                 </button>
               </div>
             </div>
