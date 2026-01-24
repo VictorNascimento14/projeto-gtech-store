@@ -5,6 +5,7 @@ import Layout from './src/components/Layout';
 import { CartProvider } from './src/contexts/CartContext';
 import { AuthProvider } from './src/contexts/AuthContext';
 import { ProductProvider } from './src/contexts/ProductContext';
+import { FavoritesProvider } from './src/contexts/FavoritesContext';
 import { AnimatePresence } from 'framer-motion';
 import PageTransition from './src/components/PageTransition';
 
@@ -18,6 +19,7 @@ const SignUp = lazy(() => import('./src/pages/SignUp'));
 const MyOrders = lazy(() => import('./src/pages/MyOrders'));
 const Categories = lazy(() => import('./src/pages/Categories'));
 const AdminPanel = lazy(() => import('./src/pages/AdminPanel'));
+const Favorites = lazy(() => import('./src/pages/Favorites'));
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -51,6 +53,7 @@ const AnimatedRoutes = () => {
             <Route path="carrinho" element={<PageTransition><Cart /></PageTransition>} />
             <Route path="meus-pedidos" element={<PageTransition><MyOrders /></PageTransition>} />
             <Route path="categorias" element={<PageTransition><Categories /></PageTransition>} />
+            <Route path="favoritos" element={<PageTransition><Favorites /></PageTransition>} />
             <Route path="admin" element={<PageTransition><AdminPanel /></PageTransition>} />
           </Route>
           <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
@@ -61,15 +64,17 @@ const AnimatedRoutes = () => {
   );
 };
 
-const App: React.FC = () => {
+const App = () => {
   return (
     <AuthProvider>
       <ProductProvider>
         <CartProvider>
-          <Router>
-            <ScrollToTop />
-            <AnimatedRoutes />
-          </Router>
+          <FavoritesProvider>
+            <Router>
+              <ScrollToTop />
+              <AnimatedRoutes />
+            </Router>
+          </FavoritesProvider>
         </CartProvider>
       </ProductProvider>
     </AuthProvider>
