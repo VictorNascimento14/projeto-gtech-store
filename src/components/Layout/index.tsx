@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
+import * as THREE from 'three';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -29,6 +30,33 @@ const Layout: React.FC = () => {
   const [isAppLoading, setIsAppLoading] = useState(() => {
     return !sessionStorage.getItem('hasSeenPreloader');
   });
+  const [loadProgress, setLoadProgress] = useState(0);
+
+  useEffect(() => {
+    if (!isAppLoading) return;
+
+    // Conecta com o LoadingManager do Three.js para rastrear modelos 3D
+    THREE.DefaultLoadingManager.onProgress = (url, itemsLoaded, itemsTotal) => {
+      const progress = (itemsLoaded / itemsTotal) * 100;
+      setLoadProgress(prev => Math.max(prev, progress));
+    };
+
+    THREE.DefaultLoadingManager.onLoad = () => {
+      setLoadProgress(100);
+    };
+
+    // Fallback: se o Three.js não disparar (ex: sem modelos na home), 
+    // libera após 2 segundos de qualquer forma para não travar o usuário
+    const safetyTimer = setTimeout(() => {
+      setLoadProgress(100);
+    }, 5000);
+
+    return () => {
+      THREE.DefaultLoadingManager.onProgress = undefined;
+      THREE.DefaultLoadingManager.onLoad = undefined;
+      clearTimeout(safetyTimer);
+    };
+  }, [isAppLoading]);
 
   // Fecha o menu mobile quando a rota muda
   useEffect(() => {
@@ -68,10 +96,15 @@ const Layout: React.FC = () => {
   };
 
   if (isAppLoading) {
-    return <Preloader onLoadComplete={() => {
-      setIsAppLoading(false);
-      sessionStorage.setItem('hasSeenPreloader', 'true');
-    }} />;
+    return (
+      <Preloader
+        externalProgress={loadProgress}
+        onLoadComplete={() => {
+          setIsAppLoading(false);
+          sessionStorage.setItem('hasSeenPreloader', 'true');
+        }}
+      />
+    );
   }
 
   return (
