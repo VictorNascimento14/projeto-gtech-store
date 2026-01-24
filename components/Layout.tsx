@@ -2,10 +2,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Outlet, Link, NavLink, useNavigate } from 'react-router-dom';
 import { Search, ShoppingCart, User, Sun, Moon, LogOut, Package, ChevronDown, ArrowRight, Settings, Menu, X, Heart } from 'lucide-react';
-import { useCart } from '../contexts/CartContext';
-import { useAuth } from '../contexts/AuthContext';
-import { useProducts } from '../contexts/ProductContext';
-import { useFavorites } from '../contexts/FavoritesContext';
+import { useCart } from '../src/contexts/CartContext';
+import { useAuth } from '../src/contexts/AuthContext';
+import { useProducts } from '../src/contexts/ProductContext';
+import { useFavorites } from '../src/contexts/FavoritesContext';
 import { Product } from '../src/types';
 import Logo from '../src/components/Logo';
 import Footer from '../src/components/Footer';
@@ -26,30 +26,11 @@ const Layout: React.FC = () => {
   const [suggestions, setSuggestions] = useState<Product[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const searchRef = useRef<HTMLDivElement>(null);
-  const cartRef = useRef<HTMLDivElement>(null);
-  const profileRef = useRef<HTMLDivElement>(null);
 
   // Fecha o menu mobile quando a rota muda
   useEffect(() => {
     setIsMenuOpen(false);
   }, [navigate]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setShowSuggestions(false);
-      }
-      if (cartRef.current && !cartRef.current.contains(event.target as Node)) {
-        setShowCartModal(false);
-      }
-      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
-        setShowProfileMenu(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -82,12 +63,6 @@ const Layout: React.FC = () => {
     setSearchTerm('');
     setShowSuggestions(false);
   };
-
-  const navLinkClasses = ({ isActive }: { isActive: boolean }) =>
-    `transition-all duration-200 whitespace-nowrap pb-[2px] border-b-2 text-base tracking-tight inline-block ${isActive
-      ? 'text-primary border-primary font-bold'
-      : 'text-[#474747] dark:text-gray-400 border-transparent hover:text-primary font-normal'
-    }`;
 
   return (
     <div className="flex flex-col min-h-screen dark:bg-gray-950">
@@ -133,7 +108,6 @@ const Layout: React.FC = () => {
               </button>
             </div>
 
-            {/* Área com scroll */}
             <div className="flex-1 overflow-y-auto px-6 pb-6">
               {/* Perfil do usuário */}
               {isLoggedIn && (
@@ -181,16 +155,13 @@ const Layout: React.FC = () => {
                   </div>
                 </div>
               )}
-
+              {!isLoggedIn && (
+                <div className="px-6 py-4 border-t border-gray-100 dark:border-gray-800 flex flex-col gap-3 bg-white dark:bg-gray-900">
+                  <Link to="/login" onClick={() => setIsMenuOpen(false)} className="w-full bg-primary text-white text-center py-3 rounded-lg font-bold shadow-lg shadow-primary/30">Entrar</Link>
+                  <Link to="/signup" onClick={() => setIsMenuOpen(false)} className="w-full bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-center py-3 rounded-lg font-bold">Cadastre-se</Link>
+                </div>
+              )}
             </div>
-
-            {/* Botões Entrar/Cadastrar fixos no bottom */}
-            {!isLoggedIn && (
-              <div className="px-6 py-4 border-t border-gray-100 dark:border-gray-800 flex flex-col gap-3 bg-white dark:bg-gray-900">
-                <Link to="/login" onClick={() => setIsMenuOpen(false)} className="w-full bg-primary text-white text-center py-3 rounded-lg font-bold shadow-lg shadow-primary/30">Entrar</Link>
-                <Link to="/signup" onClick={() => setIsMenuOpen(false)} className="w-full bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-center py-3 rounded-lg font-bold">Cadastre-se</Link>
-              </div>
-            )}
           </div>
         </>
       )}
