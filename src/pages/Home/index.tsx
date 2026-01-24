@@ -269,9 +269,6 @@ const Home: React.FC = () => {
   const { products, heroSlides, loading: contextLoading } = useProducts();
   const [currentModelIndex, setCurrentModelIndex] = useState(0);
   const [currentHeroSlide, setCurrentHeroSlide] = useState(0);
-  const [isLoading, setIsLoading] = useState(() => {
-    return !sessionStorage.getItem('hasSeenPreloader');
-  });
   const [isFading, setIsFading] = useState(false);
   const [isModelTransitioning, setIsModelTransitioning] = useState(false);
   const currentModel = AVAILABLE_MODELS[currentModelIndex];
@@ -303,13 +300,6 @@ const Home: React.FC = () => {
     }, 30000);
     return () => clearInterval(interval);
   }, []);
-
-  if (isLoading || (contextLoading && heroSlides.length === 0)) {
-    return <Preloader onLoadComplete={() => {
-      setIsLoading(false);
-      sessionStorage.setItem('hasSeenPreloader', 'true');
-    }} />;
-  }
 
   if (!currentSlide) {
     return (
