@@ -5,7 +5,8 @@ import { Search, ShoppingCart, User, Sun, Moon, LogOut, Package, ChevronDown, Ar
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useProducts } from '../contexts/ProductContext';
-import { Product } from '../types';
+import { Product } from '../src/types';
+import Logo from '../src/components/Logo';
 
 const DarkModeToggle = () => {
   const [isDark, setIsDark] = useState(false);
@@ -143,9 +144,7 @@ const Layout: React.FC = () => {
               <Menu className="w-6 h-6" />
             </button>
 
-            <Link to="/" className="flex items-center gap-2 md:mx-0 mx-auto">
-              <img src="../public/assets/logo-header.svg" alt="logo da página" className="h-7 md:h-auto" />
-            </Link>
+            <Logo variant="header" className="md:mx-0 mx-auto" />
 
             {/* Espaçador invisível para manter o logo centralizado no mobile */}
             <div className="w-10 md:hidden" />
@@ -282,7 +281,7 @@ const Layout: React.FC = () => {
             {/* Sidebar */}
             <div className="fixed top-0 left-0 h-full w-[280px] bg-white dark:bg-gray-900 z-[101] md:hidden p-6 shadow-2xl animate-in slide-in-from-left duration-300">
               <div className="flex items-center justify-between mb-8">
-                <img src="../public/assets/logo-header.svg" alt="Digital Store" className="h-6" />
+                <Logo variant="header" className="h-6" />
                 <button
                   onClick={() => setIsMenuOpen(false)}
                   className="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
@@ -365,11 +364,8 @@ const Layout: React.FC = () => {
         <div className="container mx-auto px-4 lg:px-12">
           {/* Main Footer Content */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-            {/* Logo and Description */}
             <div className="space-y-6">
-              <div className="flex items-center gap-2">
-                <img src="../public/assets/logo-footer.svg" alt="Digital Store" className="h-8" />
-              </div>
+              <Logo variant="footer" />
               <p className="text-sm text-gray-400 leading-relaxed">
                 Na Digital Store você encontra a melhor qualidade e preços acessíveis para você. <br />
                 Temos uma ampla variedade de produtos para atender às suas necessidades. <br />
