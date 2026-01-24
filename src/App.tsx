@@ -1,7 +1,7 @@
 
 import React, { useEffect, useLayoutEffect } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import Layout from '../components/Layout';
+import Layout from './components/Layout';
 import Home from './pages/Home';
 import ProductListing from './pages/ProductListing';
 import ProductDetail from './pages/ProductDetail';
