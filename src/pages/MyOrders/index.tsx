@@ -137,10 +137,13 @@ const MyOrders: React.FC = () => {
                     <button className="text-xs text-primary font-bold hover:underline flex items-center gap-1">Ver detalhes <ChevronRight className="w-3 h-3" /></button>
                   </div>
                 </div>
-                <button className="hidden sm:flex items-center gap-2 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 px-6 py-2 rounded-xl text-sm font-bold text-gray-600 dark:text-gray-300 transition-colors border border-gray-200 dark:border-gray-700">
+                <Link
+                  to={`/rastreio/${order.id}`}
+                  className="hidden sm:flex items-center gap-2 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 px-6 py-2 rounded-xl text-sm font-bold text-gray-600 dark:text-gray-300 transition-colors border border-gray-200 dark:border-gray-700"
+                >
                   <Truck className="w-5 h-5 text-primary" />
                   Rastrear Entrega
-                </button>
+                </Link>
               </div>
             </div>
           ))}
