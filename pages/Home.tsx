@@ -15,8 +15,8 @@ const AVAILABLE_MODELS = [
   {
     id: 'nike-pegasus-36',
     name: 'Nike Air Zoom Pegasus 36',
-    url: '/nike1/scene.gltf',
-    scale: 1.7,
+    url: '/nike_air_zoom_pegasus_36/scene.gltf',
+    scale: 1.3,
     position: [0, -15, 0],
     description: 'O tênis perfeito para corridas longas. Com tecnologia Zoom Air na parte dianteira e traseira, oferece amortecimento responsivo e durável. Seu design aerodinâmico combina performance e estilo.',
     price: 'R$ 899,90',
@@ -27,31 +27,11 @@ const AVAILABLE_MODELS = [
     name: 'JBL tour one m2',
     url: '/jbl_tour/scene.gltf',
     scale: 8.5,
-    position: [10, 10, 0],
+    position: [0, 0, 0],
     description: 'A tecnologia de Cancelamento de Ruído Adaptativo do JBL Tour One M2 elimina distrações para que você possa curtir suas músicas favoritas, ou até mesmo o silêncio, tudo com o lendário JBL Pro Sound de alta resolução. Mergulhe em um áudio espacial incrível em qualquer lugar por até 50 horas ou aproveite a clareza da tecnologia de 4 microfones enquanto fala ao telefone.',
     price: 'R$ 1899,90',
     tag: 'Novo'
   },
-  {
-    id: 'nike-pegasus-trail',
-    name: 'Nike Pegasus Trail 3',
-    url: '/nike_air_zoom_pegasus_36%20%281%29/scene.gltf',
-    scale: 1.5,
-    position: [0, -15, 0],
-    description: 'Projetado para trilhas. Com tração agressiva e proteção reforçada, domina qualquer terreno. A combinação perfeita entre estabilidade e velocidade off-road.',
-    price: 'R$ 1.590,90',
-    tag: 'Trail'
-  },
-  {
-    id: 'nike-pegasus-turbo',
-    name: 'Nike Air Zoom Pegasus Turbo',
-    url: '/nike_air_zoom_pegasus_36%20%281%29/scene.gltf',
-    scale: 1.5,
-    position: [0, -15, 0],
-    description: 'Velocidade máxima. Com espuma ZoomX ultraeve e design de corrida profissional, foi criado para quebrar seus recordes pessoais. Leveza e retorno de energia incomparáveis.',
-    price: 'R$ 1.199,90',
-    tag: 'Premium'
-  }
 ];
 
 class ModelErrorBoundary extends React.Component<
@@ -177,7 +157,7 @@ const SneakerModel: React.FC<{
   useFrame((state, delta) => {
     if (groupRef.current && isReady) {
       // Rotação lenta e contínua
-      groupRef.current.rotation.y += delta * 0.3;
+      groupRef.current.rotation.y += delta * 0.1;
     }
   });
 
@@ -293,6 +273,7 @@ const Home: React.FC = () => {
     return !sessionStorage.getItem('hasSeenPreloader');
   });
   const [isFading, setIsFading] = useState(false);
+  const [isModelTransitioning, setIsModelTransitioning] = useState(false);
   const currentModel = AVAILABLE_MODELS[currentModelIndex];
   const currentSlide = heroSlides.length > 0 ? (heroSlides[currentHeroSlide] || heroSlides[0]) : null;
 
@@ -305,9 +286,23 @@ const Home: React.FC = () => {
         setCurrentHeroSlide((prev) => (prev + 1) % heroSlides.length);
         setIsFading(false);
       }, 300);
-    }, 5000);
+    }, 20000);
     return () => clearInterval(interval);
   }, [heroSlides.length]);
+
+  // Auto-play dos modelos 3D com transição fade
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsModelTransitioning(true);
+      setTimeout(() => {
+        setCurrentModelIndex((prev) => (prev + 1) % AVAILABLE_MODELS.length);
+        setTimeout(() => {
+          setIsModelTransitioning(false);
+        }, 50);
+      }, 500);
+    }, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   if (isLoading || (contextLoading && heroSlides.length === 0)) {
     return <Preloader onLoadComplete={() => {
@@ -325,15 +320,28 @@ const Home: React.FC = () => {
   }
 
   const nextModel = () => {
-    setCurrentModelIndex((prev) => (prev + 1) % AVAILABLE_MODELS.length);
+    setIsModelTransitioning(true);
+    setTimeout(() => {
+      setCurrentModelIndex((prev) => (prev + 1) % AVAILABLE_MODELS.length);
+      setTimeout(() => setIsModelTransitioning(false), 50);
+    }, 500);
   };
 
   const prevModel = () => {
-    setCurrentModelIndex((prev) => (prev - 1 + AVAILABLE_MODELS.length) % AVAILABLE_MODELS.length);
+    setIsModelTransitioning(true);
+    setTimeout(() => {
+      setCurrentModelIndex((prev) => (prev - 1 + AVAILABLE_MODELS.length) % AVAILABLE_MODELS.length);
+      setTimeout(() => setIsModelTransitioning(false), 50);
+    }, 500);
   };
 
   const goToModel = (index: number) => {
-    setCurrentModelIndex(index);
+    if (index === currentModelIndex) return;
+    setIsModelTransitioning(true);
+    setTimeout(() => {
+      setCurrentModelIndex(index);
+      setTimeout(() => setIsModelTransitioning(false), 50);
+    }, 500);
   };
 
   const goToHeroSlide = (index: number) => {
@@ -348,25 +356,25 @@ const Home: React.FC = () => {
   return (
     <div className="transition-colors">
       {/* Hero Carrossel */}
-      <section className={`${currentSlide.bgColor} ${currentSlide.bgDark} py-16 lg:py-24 relative overflow-hidden transition-colors duration-500`}>
+      <section className={`${currentSlide.bgColor} ${currentSlide.bgDark} py-20 lg:py-24 relative overflow-hidden transition-colors duration-500`}>
         {/* Decoração de fundo com pontinhos */}
-        <div className="absolute top-8 right-8 w-40 h-40 opacity-20">
+        <div className="absolute top-4 right-4 lg:top-8 lg:right-8 w-32 h-32 lg:w-40 lg:h-40 opacity-20">
           <div className="grid grid-cols-6 gap-2">
             {Array.from({ length: 36 }).map((_, i) => (
-              <div key={i} className="w-2 h-2 rounded-full bg-primary" />
+              <div key={i} className="w-1.5 h-1.5 lg:w-2 lg:h-2 rounded-full bg-primary" />
             ))}
           </div>
         </div>
 
-        <div className="container mx-auto px-4 lg:px-12 flex flex-col-reverse lg:flex-row items-center justify-between relative">
-          <div className={`lg:w-1/2 z-10 mt-10 lg:mt-0 text-center lg:text-left transition-all duration-300 ${isFading ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+        <div className="container mx-auto px-4 lg:px-12 flex flex-col-reverse lg:flex-row items-center justify-between relative gap-12 lg:gap-0">
+          <div className={`lg:w-1/2 z-10 text-center lg:text-left transition-all duration-300 ${isFading ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
             <span className="text-primary font-bold text-sm tracking-widest mb-3 block uppercase">
               {currentSlide.tag}
             </span>
-            <h1 className="text-4xl lg:text-6xl font-extrabold text-[#1F1F1F] dark:text-white leading-tight mb-6">
+            <h1 className="text-3xl lg:text-6xl font-extrabold text-[#1F1F1F] dark:text-white leading-tight mb-6">
               {currentSlide.title}
             </h1>
-            <p className="text-gray-500 dark:text-gray-400 text-lg mb-8 max-w-md mx-auto lg:mx-0 leading-relaxed">
+            <p className="text-gray-500 dark:text-gray-400 text-base lg:text-lg mb-8 max-w-md mx-auto lg:mx-0 leading-relaxed">
               {currentSlide.description}
             </p>
             <Link
@@ -376,11 +384,11 @@ const Home: React.FC = () => {
               {currentSlide.buttonText}
             </Link>
           </div>
-          <div className={`lg:w-1/2 relative flex justify-center lg:justify-center transition-all duration-300 ${isFading ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+          <div className={`lg:w-1/2 relative flex justify-center lg:justify-center transition-all duration-300 ${isFading ? 'opacity-0 scale-95' : 'opacity-100 scale-100'} px-6 lg:px-0`}>
             <img
               key={currentSlide.id}
               alt={currentSlide.title}
-              className="w-full max-w-[500px] object-contain animate-float drop-shadow-2xl mix-blend-multiply dark:mix-blend-normal rounded-3xl"
+              className="w-full max-w-[340px] lg:max-w-[500px] object-contain animate-float drop-shadow-2xl mix-blend-multiply dark:mix-blend-normal rounded-3xl"
               src={currentSlide.image}
             />
           </div>
@@ -402,78 +410,68 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      <section className="py-24 bg-white dark:bg-gray-900/30 overflow-hidden">
-        <div className="container mx-auto px-4 lg:px-12 flex flex-col md:flex-row items-center gap-16">
-          <div className="md:w-1/2 relative flex justify-center min-h-[400px]">
-            <Sneaker3DView currentModel={currentModel} modelKey={currentModel.id} />
-
-            {/* Botões de navegação */}
-            <button
-              onClick={prevModel}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white dark:bg-gray-800 shadow-xl flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-all hover:scale-110 active:scale-95 border border-gray-200 dark:border-gray-700"
-              aria-label="Modelo anterior"
+      {/* Coleções em Destaque */}
+      <section className="py-12 bg-[#F5F5F5] dark:bg-gray-900">
+        <div className="container mx-auto px-4 lg:px-12 max-w-6xl">
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-8">Coleções em destaque</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Card 1 - Supreme */}
+            <div
+              className="relative overflow-hidden rounded-lg aspect-[16/10] w-full bg-[#D8E3F2] dark:bg-gray-800 bg-cover bg-center bg-no-repeat"
+              style={{ backgroundImage: "url('/assets/colecao-destaques/collection-1.png')" }}
             >
-              <LucideIcons.ChevronLeft className="w-6 h-6 text-gray-700 dark:text-white" />
-            </button>
+              <div className="relative z-10 p-3 flex flex-col justify-between h-full">
+                <div>
+                  <span className="inline-block bg-[#E0FF51] text-gray-900 text-xs font-extrabold px-3 py-1.5 rounded-md mb-4 uppercase tracking-wide">30% OFF</span>
+                </div>
+                <Link
+                  to="/produtos?categoria=Camisetas"
+                  className="bg-white/90 hover:bg-white text-[#EE4266] px-8 py-2.5 rounded-lg font-bold text-sm transition-all w-fit shadow-sm text-center"
+                >
+                  Comprar
+                </Link>
+              </div>
+            </div>
 
-            <button
-              onClick={nextModel}
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white dark:bg-gray-800 shadow-xl flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-all hover:scale-110 active:scale-95 border border-gray-200 dark:border-gray-700"
-              aria-label="Próximo modelo"
+            {/* Card 2 - Adidas */}
+            <div
+              className="relative overflow-hidden rounded-lg aspect-[16/10] w-full bg-[#E2E3FF] dark:bg-gray-800 bg-cover bg-center bg-no-repeat"
+              style={{ backgroundImage: "url('/assets/colecao-destaques/collection-2.png')" }}
             >
-              <LucideIcons.ChevronRight className="w-6 h-6 text-gray-700 dark:text-white" />
-            </button>
-
-            {/* Indicadores de página */}
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
-              {AVAILABLE_MODELS.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => goToModel(index)}
-                  className={`transition-all rounded-full ${index === currentModelIndex
-                    ? 'w-8 h-2 bg-primary'
-                    : 'w-2 h-2 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
-                    }`}
-                  aria-label={`Ir para modelo ${index + 1}`}
-                />
-              ))}
-            </div>
-          </div>
-          <div className="md:w-1/2 text-center md:text-left">
-            <div className="inline-block bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full mb-3 uppercase tracking-widest">
-              {currentModel.tag}
-            </div>
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 dark:text-white font-black leading-tight mb-4">
-              {currentModel.name}
-            </h2>
-            <p className="text-2xl font-bold text-primary mb-6">
-              {currentModel.price}
-            </p>
-            <p className="text-gray-500 dark:text-gray-400 text-base mb-8 leading-relaxed mx-auto md:mx-0 max-w-md">
-              {currentModel.description}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-              <Link
-                to="/produtos"
-                className="bg-primary hover:bg-primary-hover text-white px-10 py-3 rounded-lg font-bold text-sm transition-transform transform hover:scale-105 shadow-lg shadow-primary/30 inline-block"
-              >
-                Ver Coleção Completa
-              </Link>
-              <button className="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 hover:border-primary dark:hover:border-primary text-gray-700 dark:text-white px-10 py-3 rounded-lg font-bold text-sm transition-all hover:scale-105 inline-block">
-                Saiba Mais
-              </button>
+              <div className="relative z-10 p-3 flex flex-col justify-between h-full">
+                <div>
+                  <span className="inline-block bg-[#E0FF51] text-gray-900 text-xs font-extrabold px-3 py-1.5 rounded-md mb-4 uppercase tracking-wide">30% OFF</span>
+                </div>
+                <Link
+                  to="/produtos?categoria=Tênis"
+                  className="bg-white/90 hover:bg-white text-[#EE4266] px-8 py-2.5 rounded-lg font-bold text-sm transition-all w-fit shadow-sm text-center"
+                >
+                  Comprar
+                </Link>
+              </div>
             </div>
 
-            {/* Contador de modelos */}
-            <div className="mt-8 flex items-center gap-2 text-gray-400 dark:text-gray-500 text-sm justify-center md:justify-start">
-              <span className="font-bold text-primary text-lg">{currentModelIndex + 1}</span>
-              <span>/</span>
-              <span>{AVAILABLE_MODELS.length}</span>
-              <span className="ml-2">modelos disponíveis</span>
+            {/* Card 3 - Beats */}
+            <div
+              className="relative overflow-hidden rounded-lg aspect-[16/10] w-full bg-[#F9F1E7] dark:bg-gray-800 bg-cover bg-center bg-no-repeat"
+              style={{ backgroundImage: "url('/assets/colecao-destaques/collection-3.png')" }}
+            >
+              <div className="relative z-10 p-3 flex flex-col justify-between h-full">
+                <div>
+                  <span className="inline-block bg-[#E0FF51] text-gray-900 text-xs font-extrabold px-3 py-1.5 rounded-md mb-4 uppercase tracking-wide">30% OFF</span>
+                </div>
+                <Link
+                  to="/produtos?categoria=Headphones"
+                  className="bg-white/90 hover:bg-white text-[#EE4266] px-8 py-2.5 rounded-lg font-bold text-sm transition-all w-fit shadow-sm text-center"
+                >
+                  Comprar
+                </Link>
+              </div>
             </div>
           </div>
         </div>
       </section>
+
 
       <section className="py-12 bg-[#F9F8FE] dark:bg-gray-950">
         <div className="container mx-auto px-4 lg:px-12 text-center">
@@ -515,6 +513,81 @@ const Home: React.FC = () => {
             {products.slice(0, 8).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-24 bg-white dark:bg-gray-900/30 overflow-hidden">
+        <div className="container mx-auto px-4 lg:px-12 flex flex-col md:flex-row items-center gap-16">
+          <div className="md:w-1/2 relative flex justify-center min-h-[400px]">
+            <div className={`w-full h-full transition-opacity duration-500 ${isModelTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+              <Sneaker3DView currentModel={currentModel} modelKey={currentModel.id} />
+            </div>
+
+            {/* Botões de navegação */}
+            <button
+              onClick={prevModel}
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white dark:bg-gray-800 shadow-xl flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-all hover:scale-110 active:scale-95 border border-gray-200 dark:border-gray-700"
+              aria-label="Modelo anterior"
+            >
+              <LucideIcons.ChevronLeft className="w-6 h-6 text-gray-700 dark:text-white" />
+            </button>
+
+            <button
+              onClick={nextModel}
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white dark:bg-gray-800 shadow-xl flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-all hover:scale-110 active:scale-95 border border-gray-200 dark:border-gray-700"
+              aria-label="Próximo modelo"
+            >
+              <LucideIcons.ChevronRight className="w-6 h-6 text-gray-700 dark:text-white" />
+            </button>
+
+            {/* Indicadores de página */}
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
+              {AVAILABLE_MODELS.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => goToModel(index)}
+                  className={`transition-all rounded-full ${index === currentModelIndex
+                    ? 'w-8 h-2 bg-primary'
+                    : 'w-2 h-2 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
+                    }`}
+                  aria-label={`Ir para modelo ${index + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+          <div className={`md:w-1/2 text-center md:text-left transition-opacity duration-500 ${isModelTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+            <div className="inline-block bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full mb-3 uppercase tracking-widest">
+              {currentModel.tag}
+            </div>
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 dark:text-white font-black leading-tight mb-4">
+              {currentModel.name}
+            </h2>
+            <p className="text-2xl font-bold text-primary mb-6">
+              {currentModel.price}
+            </p>
+            <p className="text-gray-500 dark:text-gray-400 text-base mb-8 leading-relaxed mx-auto md:mx-0 max-w-md">
+              {currentModel.description}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+              <Link
+                to="/produtos"
+                className="bg-primary hover:bg-primary-hover text-white px-10 py-3 rounded-lg font-bold text-sm transition-transform transform hover:scale-105 shadow-lg shadow-primary/30 inline-block"
+              >
+                Ver Coleção Completa
+              </Link>
+              <button className="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 hover:border-primary dark:hover:border-primary text-gray-700 dark:text-white px-10 py-3 rounded-lg font-bold text-sm transition-all hover:scale-105 inline-block">
+                Saiba Mais
+              </button>
+            </div>
+
+            {/* Contador de modelos */}
+            <div className="mt-8 flex items-center gap-2 text-gray-400 dark:text-gray-500 text-sm justify-center md:justify-start">
+              <span className="font-bold text-primary text-lg">{currentModelIndex + 1}</span>
+              <span>/</span>
+              <span>{AVAILABLE_MODELS.length}</span>
+              <span className="ml-2">modelos disponíveis</span>
+            </div>
           </div>
         </div>
       </section>

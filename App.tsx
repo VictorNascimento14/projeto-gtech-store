@@ -11,9 +11,11 @@ import SignUp from './pages/SignUp';
 import MyOrders from './pages/MyOrders';
 import Categories from './pages/Categories';
 import AdminPanel from './pages/AdminPanel';
+import Favorites from './pages/Favorites';
 import { CartProvider } from './contexts/CartContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProductProvider } from './contexts/ProductContext';
+import { FavoritesProvider } from './contexts/FavoritesContext';
 
 import { AnimatePresence } from 'framer-motion';
 import PageTransition from './components/PageTransition';
@@ -50,6 +52,7 @@ const AnimatedRoutes = () => {
           <Route path="meus-pedidos" element={<PageTransition><MyOrders /></PageTransition>} />
           <Route path="categorias" element={<PageTransition><Categories /></PageTransition>} />
           <Route path="admin" element={<PageTransition><AdminPanel /></PageTransition>} />
+          <Route path="favoritos" element={<PageTransition><Favorites /></PageTransition>} />
         </Route>
         <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
         <Route path="/signup" element={<PageTransition><SignUp /></PageTransition>} />
@@ -63,10 +66,12 @@ const App: React.FC = () => {
     <AuthProvider>
       <ProductProvider>
         <CartProvider>
-          <Router>
-            <ScrollToTop />
-            <AnimatedRoutes />
-          </Router>
+          <FavoritesProvider>
+            <Router>
+              <ScrollToTop />
+              <AnimatedRoutes />
+            </Router>
+          </FavoritesProvider>
         </CartProvider>
       </ProductProvider>
     </AuthProvider>
