@@ -61,7 +61,7 @@ const AnimatedRoutes = () => {
   );
 };
 
-const App: React.FC = () => {
+const App = () => {
   return (
     <AuthProvider>
       <ProductProvider>
