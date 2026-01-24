@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Package, Truck, CheckCircle, ChevronLeft, MapPin, Calendar, Clock, AlertCircle } from 'lucide-react';
+import { Package, Truck, CheckCircle, ChevronLeft, MapPin, Calendar, Clock, AlertCircle, ClipboardList } from 'lucide-react';
 import { useProducts } from '../../contexts/ProductContext';
 
 const OrderTracking: React.FC = () => {
@@ -33,30 +33,33 @@ const OrderTracking: React.FC = () => {
     const steps = [
         {
             id: 1,
-            label: 'Em preparação',
-            icon: Package,
+            label: 'Pedido recebido',
+            icon: ClipboardList,
             activeStatus: ['pending', 'processing', 'shipped', 'delivered'],
-            description: 'Seu pedido está sendo separado e embalado.'
+            description: 'Recebemos seu pedido e estamos conferindo o pagamento.'
         },
         {
             id: 2,
+            label: 'Em preparação',
+            icon: Package,
+            activeStatus: ['processing', 'shipped', 'delivered'],
+            description: 'Seu pedido está sendo separado e embalado.'
+        },
+        {
+            id: 3,
             label: 'Em transporte',
             icon: Truck,
             activeStatus: ['shipped', 'delivered'],
             description: 'Pedido a caminho do endereço de entrega.'
         },
         {
-            id: 3,
+            id: 4,
             label: 'Entregue',
             icon: CheckCircle,
             activeStatus: ['delivered'],
             description: 'Pronto! Seu pedido foi entregue com sucesso.'
         }
     ];
-
-    const currentStep = steps.findIndex(step => !step.activeStatus.includes(order.status)) === -1
-        ? 3 // All steps active
-        : steps.findIndex(step => !step.activeStatus.includes(order.status));
 
     // Lógica especial para cancelado
     const isCancelled = order.status === 'cancelled';
@@ -86,8 +89,6 @@ const OrderTracking: React.FC = () => {
 
                 {/* Timeline Visual */}
                 <div className="bg-white dark:bg-gray-900 rounded-3xl p-8 lg:p-12 shadow-sm border border-gray-100 dark:border-gray-800 mb-8 relative overflow-hidden">
-                    {/* Timeline Line Background */}
-                    <div className="absolute top-[88px] left-12 right-12 h-1 bg-gray-100 dark:bg-gray-800 hidden md:block" />
 
                     <div className="relative flex flex-col md:flex-row justify-between gap-8 md:gap-4">
                         {steps.map((step, index) => {
@@ -100,11 +101,10 @@ const OrderTracking: React.FC = () => {
                                 <div key={step.id} className={`flex md:flex-col items-center gap-4 md:gap-6 relative z-10 group ${isActive ? 'opacity-100' : 'opacity-40'}`}>
                                     {/* Círculo do ícone */}
                                     <div className={`
-                    w-16 h-16 rounded-full flex items-center justify-center transition-all duration-500 shadow-xl
+                    w-16 h-16 rounded-full flex items-center justify-center shadow-xl z-20 relative
                     ${isActive || isCompleted
                                             ? 'bg-primary text-white scale-110 shadow-primary/30'
                                             : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600'}
-                    ${isActive && !isCompleted ? 'animate-pulse' : ''}
                   `}>
                                         <StepIcon className={`w-8 h-8 ${isActive && !isCompleted ? 'animate-bounce' : ''}`} />
                                     </div>
@@ -119,9 +119,16 @@ const OrderTracking: React.FC = () => {
                                         </p>
                                     </div>
 
-                                    {/* Linha de conexão vertical para mobile */}
+                                    {/* Linha de conexão (Horizontal - Desktop) */}
                                     {index !== steps.length - 1 && (
-                                        <div className="absolute left-8 top-16 bottom-[-32px] w-1 bg-gray-100 dark:bg-gray-800 md:hidden -ml-0.5" />
+                                        <div className={`hidden md:block absolute top-8 left-[50%] w-full h-1 -z-10 transition-colors duration-500 ${isCompleted ? 'bg-primary' : 'bg-gray-100 dark:bg-gray-800'
+                                            }`} />
+                                    )}
+
+                                    {/* Linha de conexão (Vertical - Mobile) */}
+                                    {index !== steps.length - 1 && (
+                                        <div className={`absolute left-8 top-16 bottom-[-24px] w-1 md:hidden -ml-0.5 -z-10 transition-colors duration-500 ${isCompleted ? 'bg-primary' : 'bg-gray-100 dark:bg-gray-800'
+                                            }`} />
                                     )}
                                 </div>
                             );
