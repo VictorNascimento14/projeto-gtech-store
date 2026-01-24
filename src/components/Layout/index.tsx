@@ -13,7 +13,6 @@ import Header from '../Header';
 import UserSidebar from '../UserSidebar';
 
 
-
 const Layout: React.FC = () => {
   const navigate = useNavigate();
   const { totalItems, items, clearCart, subtotal } = useCart();
