@@ -1,5 +1,5 @@
 
-import { Product, Collection } from '../types';
+import { Product, Collection } from './types';
 
 export const INITIAL_PRODUCTS: Product[] = [
   {
