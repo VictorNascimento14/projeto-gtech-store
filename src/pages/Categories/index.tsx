@@ -33,7 +33,7 @@ const Categories: React.FC = () => {
                 className="group bg-white dark:bg-gray-900 rounded-[30px] p-10 shadow-sm border border-transparent dark:border-gray-800 hover:shadow-lg transition-all flex flex-col items-center text-center relative overflow-hidden"
               >
                 <div className="w-24 h-24 rounded-full bg-[#F5F5F5] dark:bg-gray-900 flex items-center justify-center mb-6 group-hover:bg-gray-200 transition-colors">
-                  <img src={iconSrc} alt={cat.name} className="w-12 h-12 object-contain opacity-60 group-hover:opacity-100 transition-opacity" />
+                  <img src={iconSrc} alt={cat.name} className="w-12 h-12 object-contain opacity-60 group-hover:opacity-100 transition-opacity dark:brightness-0 dark:invert" />
                 </div>
 
                 <h3 className="text-lg font-bold text-[#1F2744] dark:text-gray-100 mb-4 transition-colors">
