@@ -19,6 +19,7 @@ const MyOrders = lazy(() => import('./src/pages/MyOrders'));
 const Categories = lazy(() => import('./src/pages/Categories'));
 const AdminPanel = lazy(() => import('./src/pages/AdminPanel'));
 const OrderTracking = lazy(() => import('./src/pages/OrderTracking'));
+const OrderDetails = lazy(() => import('./src/pages/OrderDetails'));
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -51,6 +52,7 @@ const AnimatedRoutes = () => {
             <Route path="produto/:id" element={<PageTransition><ProductDetail /></PageTransition>} />
             <Route path="carrinho" element={<PageTransition><Cart /></PageTransition>} />
             <Route path="meus-pedidos" element={<PageTransition><MyOrders /></PageTransition>} />
+            <Route path="meus-pedidos/:id" element={<PageTransition><OrderDetails /></PageTransition>} />
             <Route path="rastreio/:id" element={<PageTransition><OrderTracking /></PageTransition>} />
             <Route path="categorias" element={<PageTransition><Categories /></PageTransition>} />
             <Route path="admin" element={<PageTransition><AdminPanel /></PageTransition>} />

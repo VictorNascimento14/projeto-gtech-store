@@ -93,7 +93,7 @@ const MyOrders: React.FC = () => {
                     <div className="text-sm font-bold text-gray-700 dark:text-gray-200">
                       {order.items.length} {order.items.length === 1 ? 'Produto' : 'Produtos'}
                     </div>
-                    <button className="text-xs text-primary font-bold hover:underline flex items-center gap-1">Ver detalhes <ChevronRight className="w-3 h-3" /></button>
+                    <Link to={`/meus-pedidos/${order.id}`} className="text-xs text-primary font-bold hover:underline flex items-center gap-1">Ver detalhes <ChevronRight className="w-3 h-3" /></Link>
                   </div>
                 </div>
 
