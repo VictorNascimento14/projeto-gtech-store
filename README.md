@@ -20,62 +20,38 @@ Este projeto é uma loja virtual completa desenvolvida com foco em performance e
 
 ## ✨ Funcionalidades Principais
 
-- **🛒 Carrinho de Compras Interativo**: Gerenciamento completo de itens, cálculo de totais e checkout.
-- **👮 Painel Administrativo Modular**: Área de gestão totalmente refatorada e organizada em componentes modulares.
-- **🔐 Autenticação com Supabase**: Sistema de Login e Cadastro integrado ao Banco de Dados.
-- **📦 Catálogo de Produtos**: Listagem com filtros inteligentes, busca em tempo real e detalhes técnicos.
-- **📱 Design Responsivo**: Interface mobile-first adaptável para todos os dispositivos.
-- **🎨 UI/UX Premium**: Animações fluidas com Framer Motion e GSAP, visualizações 3D interativas.
-- **✨ Transições Suaves**: Navegação dinâmica entre páginas com transições sincronizadas.
+- **🛒 Carrinho & Checkout**: Fluxo completo de compra, cálculo de totais e gerenciamento de estado global.
+- **👮 Painel Administrativo Pro**: 
+  - **Gestão de Pedidos**: Alteração de status (Recebido, Preparando, Transporte) com menu dinâmico e modal de segurança para cancelamentos.
+  - **Gestão de Produtos**: CRUD completo de itens da loja.
+- **🚚 Rastreamento de Pedidos**: Timeline visual animada que mostra o progresso da entrega em tempo real para o cliente.
+- **📦 Meus Pedidos & Detalhes**: Histórico completo de compras e página dedicada de detalhes do pedido (estilo "Nota Fiscal" premiun).
+- **🔐 Autenticação**: Sistema robusto de Login/Cadastro integrado ao Supabase.
+- **📱 UX/UI Premium**: 
+  - Layout totalmente responsivo (Mobile-First).
+  - Animações fluidas (Framer Motion).
+  - Tema Escuro/Claro (Dark Mode).
 
-## 🚀 Tecnologias Utilizadas
+## 📂 Estrutura do Projeto (Arquitetura Atômica)
 
-- **Frontend Core**: React 19, TypeScript
-- **Build Tool**: Vite
-- **Estilização**: Tailwind CSS, PostCSS
-- **Animações**: Framer Motion, GSAP
-- **3D**: Three.js, React Three Fiber, Drei
-- **Roteamento**: React Router Dom v7
-- **Backend/BaaS**: Supabase (Auth, Database, Storage)
-- **Ícones**: Lucide React
-
-## 💻 Instalação e Execução
-
-Pré-requisitos: Node.js (v18+) e npm/yarn instalados.
-
-1. **Clone o repositório:**
-   ```bash
-   git clone https://github.com/seu-usuario/projeto-gtech-store.git
-   cd projeto-gtech-store
-   ```
-
-2. **Instale as dependências:**
-   ```bash
-   npm install
-   ```
-
-3. **Configuração de Variáveis de Ambiente:**
-   Crie um arquivo `.env` na raiz do projeto com suas credenciais do Supabase:
-   ```env
-   VITE_SUPABASE_URL=sua_url_supabase
-   VITE_SUPABASE_ANON_KEY=sua_chave_anonima
-   ```
-
-4. **Execute o servidor de desenvolvimento:**
-   ```bash
-   npm run dev
-   ```
-   Acesse `http://localhost:3000` (ou a porta indicada) no seu navegador.
-
-## 📂 Estrutura do Projeto
+A estrutura de arquivos foi reorganizada para garantir escalabilidade e modularidade:
 
 ```
-/
-├── components/   # Componentes reutilizáveis (UI, Layout, etc.)
-├── contexts/     # Context API (Carrinho, Autenticação)
-├── lib/          # Utilitários e configurações (Supabase, Utils)
-├── pages/        # Páginas da aplicação (Home, Cart, Admin, etc.)
-└── public/       # Assets estáticos
+/src
+├── components/          # Componentes globais (Layout, Header, ProductCard)
+├── contexts/            # Gerenciamento de estado (Auth, Cart, Product)
+├── lib/                 # Utilitários (Supabase client, formatters)
+├── pages/               # Módulos de página isolados
+│   ├── AdminPanel/      # Dashboard Administrativo (Orders, Customers, Inventory)
+│   ├── Cart/            # Página do Carrinho
+│   ├── Home/            # Landing Page
+│   ├── Login/SignUp/    # Autenticação
+│   ├── MyOrders/        # Histórico de Pedidos do Usuário
+│   ├── OrderDetails/    # Detalhes profundos de um pedido específico
+│   ├── OrderTracking/   # Timeline de Rastreio pública/privada
+│   ├── ProductDetail/   # Página de Venda do Produto
+│   └── ProductListing/  # Catálogo e Busca
+└── ...
 ```
 
 ## 👥 Contribuidores
