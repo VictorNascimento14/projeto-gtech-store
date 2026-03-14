@@ -1,8 +1,22 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Store, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+
+const formatDateInput = (value: string) => {
+  const digits = value.replace(/\D/g, '').slice(0, 8);
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+  return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+};
+
+const parseBirthdateToISO = (ddmmyyyy: string): string => {
+  const [d, m, y] = ddmmyyyy.split('/').map(Number);
+  if (!d || !m || !y) return '';
+  const date = new Date(y, m - 1, d);
+  if (isNaN(date.getTime())) return '';
+  return date.toISOString().split('T')[0];
+};
 
 const SignUp: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -14,7 +28,13 @@ const SignUp: React.FC = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { error } = await signUp(email, password, name, birthdate);
+    const birthdateISO = birthdate.includes('/') ? parseBirthdateToISO(birthdate) : birthdate;
+    const finalBirthdate = birthdateISO || (birthdate.match(/^\d{4}-\d{2}-\d{2}$/) ? birthdate : '');
+    if (!finalBirthdate) {
+      alert('Informe uma data de nascimento válida no formato DD/MM/AAAA');
+      return;
+    }
+    const { error } = await signUp(email, password, name, finalBirthdate);
 
     if (error) {
       alert(error.message || 'Erro ao criar conta');
@@ -65,9 +85,12 @@ const SignUp: React.FC = () => {
                   <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Data de Nascimento *</label>
                   <input
                     value={birthdate}
-                    onChange={(e) => setBirthdate(e.target.value)}
+                    onChange={(e) => setBirthdate(formatDateInput(e.target.value))}
                     className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary transition-all outline-none"
-                    type="date"
+                    placeholder="DD/MM/AAAA"
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={10}
                     required
                   />
                 </div>
@@ -112,7 +135,7 @@ const SignUp: React.FC = () => {
           <div className="hidden lg:flex relative h-[600px] w-full items-center justify-center">
             <img
               alt="Top sneaker"
-              className="absolute top-0 right-10 w-64 object-contain transform -rotate-12 drop-shadow-2xl z-10 animate-float mix-blend-multiply dark:mix-blend-normal"
+              className="absolute top-0 right-10 w-64 object-contain transform -rotate-12 drop-shadow-2xl z-10 animate-float mix-blend-multiply dark:mix-blend-normal rounded-2xl"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0qUckuxwdzXpMc8JjQJ5XF8DV6huFa5CUUKqqHRKl1D1AJwxfHDUNfDN52UdeOnxqEpOdMUxPBzAY0tzTey7PYGWtJu3Q_jgC1ZkLe8XROenYliYWsiJ--u0Qa7JG8PXapNyaCvuWEhFTui5Ki030q5dFnF8Fsv-lnqsw5hjjiuX9WSh47QgNICfpNkCsgfP5HbBjFQp9sHFDbuXR2q9QYUE108va57KyHDARnAjMlWyHvFUONoq_tPSDw2T02ypsHuzSDhZ1WkM"
             />
           </div>

@@ -89,3 +89,12 @@ html {
 .animate-float-subtle {
     animation: float-subtle 3s ease-in-out infinite;
 }
+
+/* Ocultar scrollbar mantendo scroll (iOS wheel picker) */
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
